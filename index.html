@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#13161D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ma Paie">
+<title>Ma Paie — Simulateur Universel</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- Chart.js : CDN si en ligne, fallback local sinon -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" onerror="this.onerror=null;this.src='chart.umd.js'"></script>
+</head>
+<body>
+
+<!-- ══ ONBOARDING ══ -->
+<div class="onboarding" id="onboarding" style="display:none">
+  <div class="onboard-sheet">
+    <div style="text-align:center;font-size:36px">👋</div>
+    <div class="onboard-title">Bienvenue !</div>
+    <div class="onboard-sub">Configure ton profil pour commencer.<br>Tu pourras tout modifier ensuite.</div>
+    <div class="onboard-fields">
+      <div>
+        <div class="onboard-lbl">Ton prénom</div>
+        <input class="onboard-inp" type="text" id="ob-prenom" placeholder="Ex : Thomas" autocomplete="given-name" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700">
+      </div>
+      <div>
+        <div class="onboard-lbl">Ton poste</div>
+        <input class="onboard-inp" type="text" id="ob-poste" placeholder="Ex : Commercial, Peintre…" autocomplete="off" style="font-family:'Syne',sans-serif;font-size:16px;font-weight:600">
+      </div>
+      <div>
+        <div class="onboard-lbl">Type de rémunération</div>
+        <select class="onboard-inp" id="ob-preset" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:600">
+          <option value="custom">À configurer manuellement</option>
+          <option value="fixe">Salaire fixe simple</option>
+          <option value="fixe_comm">Fixe + commissions (1 palier)</option>
+          <option value="fixe_2paliers">Fixe + commissions (2 paliers)</option>
+          <option value="commission">Commission uniquement</option>
+        </select>
+      </div>
+      <div>
+        <div class="onboard-lbl">Objectif mensuel CA / Net (€)</div>
+        <input class="onboard-inp" type="number" id="ob-obj" placeholder="Ex : 3000" inputmode="decimal">
+      </div>
+    </div>
+    <div class="onboard-tip">Tu pourras tout modifier dans <strong>⚙️ Paramètres</strong> : paliers, taux, charges, PAS…</div>
+    <button class="onboard-btn" onclick="finishOnboarding()">C'est parti →</button>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <button class="nav-item active" id="nav-home" onclick="goPage('home')"><span class="nav-icon">🏠</span><span class="nav-label">Accueil</span></button>
+  <button class="nav-item" id="nav-mois" onclick="goPage('mois')"><span class="nav-icon">📄</span><span class="nav-label">Mois</span></button>
+  <button class="nav-item" id="nav-compte" onclick="goPage('compte')"><span class="nav-icon">💳</span><span class="nav-label">Compte</span></button>
+  <button class="nav-item" id="nav-calc" onclick="goPage('calc')"><span class="nav-icon">🧮</span><span class="nav-label">Simul.</span></button>
+  <button class="nav-item" id="nav-params" onclick="goPage('params')"><span class="nav-icon">⚙️</span><span class="nav-label">Paramètres</span></button>
+</nav>
+
+<div class="main">
+
+<!-- ══ PAGE ACCUEIL ══ -->
+<div class="page active" id="page-home">
+<div class="page-pad">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <div style="min-width:0">
+      <div style="font-size:20px;font-weight:800" id="home-greeting">Accueil</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="home-poste"></div>
+    </div>
+    <div id="year-btns-home" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"></div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div class="section-title">Objectif mensuel</div>
+    <button onclick="openObjEdit()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);cursor:pointer">✎ <span id="obj-ca-display">—</span></button>
+  </div>
+  <div class="edit-panel" id="obj-edit-panel">
+    <div class="edit-panel-title">Objectif mensuel (CA ou Net selon mode)</div>
+    <input type="number" id="edit-obj-ca" class="edit-inp" inputmode="decimal" step="100" style="font-size:22px" oninput="previewObjNet()">
+    <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">Net estimé : <span id="edit-obj-net-preview" style="color:var(--green)">—</span></div>
+    <div style="display:flex;gap:8px"><button class="btn-save" onclick="saveObjEdit()">Enregistrer</button><button class="btn-cancel" onclick="closeObjEdit()">Annuler</button></div>
+  </div>
+
+  <div class="hero" id="hero-bloc"></div>
+  <div class="motiv-msg" id="motiv-msg"></div>
+  <div id="obj-list"></div>
+  <div class="gauge-bloc" id="gauge-bloc"></div>
+
+  <div class="section-title">Bilan <span id="home-year-label">2026</span></div>
+  <div class="kpi2" id="kpi-annuel"></div>
+
+  <div class="chart-bloc"><div class="section-title">CA / Brut mensuel vs objectif</div><div class="chart-h"><canvas id="chart-ca"></canvas></div></div>
+  <div class="chart-bloc"><div class="section-title">Net payé mensuel</div><div class="chart-h"><canvas id="chart-net"></canvas></div></div>
+  <div class="section-title">Détail mensuel</div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Mois</th><th id="th-base">CA HT</th><th>Δ Obj.</th><th>Net payé</th><th>Reste</th></tr></thead><tbody id="table-tbody"></tbody></table>
+  </div>
+</div>
+</div>
+
+<!-- ══ PAGE MOIS ══ -->
+<div class="page" id="page-mois">
+  <div class="page-pad" id="mois-list-view">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div><div style="font-size:20px;font-weight:800">Fiches de paie</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Touche un mois pour saisir</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <select id="year-selector" onchange="switchYear(this.value)" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:16px;font-weight:700;outline:none;cursor:pointer;-webkit-appearance:none"></select>
+        <button onclick="addYear()" style="padding:8px 12px;border-radius:10px;border:1px dashed var(--border);background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer" title="Ajouter une année">+</button>
+        <button onclick="removeYear(currentYear)" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--red);font-family:'DM Mono',monospace;font-size:14px;cursor:pointer" title="Supprimer cette année">✕</button>
+      </div>
+    </div>
+    <div id="month-list" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+  <div class="page-pad" id="mois-form-view" style="display:none">
+    <button onclick="showMonthList()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--muted);cursor:pointer;width:fit-content">← Retour</button>
+    <div style="font-size:18px;font-weight:800" id="form-month-title">Janvier 2026</div>
+    <div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace" id="form-month-date-m"></div>
+
+    <div class="field-group" id="grp-ca"><div class="field-label" id="lbl-ca">CA HT (€)</div><input class="field-input" type="number" id="f-ca" inputmode="decimal" placeholder="ex: 16000" oninput="recalcForm()"><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace">Objectif : <span id="f-obj-display">—</span></div></div>
+    <div class="field-group"><div class="field-label">Brut (€)</div><input class="field-input" type="number" id="f-brut" inputmode="decimal"></div>
+    <div class="field-group"><div class="field-label">Net imposable (€)</div><input class="field-input" type="number" id="f-net-imposable" inputmode="decimal"></div>
+    <div class="field-group"><div class="field-label">Net avant PAS (€)</div><input class="field-input" type="number" id="f-net-avant-pas" inputmode="decimal"></div>
+    <div class="field-group"><div class="field-label">PAS prélevé (€)</div><input class="field-input" type="number" id="f-pas" inputmode="decimal"></div>
+    <div class="field-group"><div class="field-label">Net payé (€)</div><input class="field-input" type="number" id="f-net-paye" inputmode="decimal"></div>
+    <div class="field-group"><div class="field-label">Taux PAS (%)</div><input class="field-input" type="number" id="f-taux-pas" inputmode="decimal" step="0.1" oninput="recalcForm()"></div>
+    <div class="field-group"><div class="field-label">Heures sup. / Primes (€)</div><input class="field-input" type="number" id="f-prime" inputmode="decimal" placeholder="Optionnel"></div>
+    <div class="field-group"><div class="field-label">Jours CP pris</div><input class="field-input" type="number" id="f-cp" inputmode="numeric"></div>
+    <div class="field-group"><div class="field-label">Titres-restaurant</div><input class="field-input" type="number" id="f-tr" inputmode="numeric"></div>
+    <div class="field-group"><div class="field-label">Notes</div><input class="field-input" type="text" id="f-note" placeholder="absences, acomptes..."></div>
+    <div class="calc-prev" id="calc-prev-form">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Calcul théorique</div>
+      <div class="cp-row" id="row-ca-comm"><span style="color:var(--muted)">CA commissionnable</span><span class="cp-val" id="fc-ca-comm">—</span></div>
+      <div id="form-paliers-detail"></div>
+      <div class="cp-row"><span style="color:var(--muted)">Fixe</span><span class="cp-val" id="fc-fixe">—</span></div>
+      <div class="cp-row"><span style="color:var(--muted)">Brut théorique</span><span class="cp-val" id="fc-brut-th">—</span></div>
+      <div class="cp-row"><span>Net estimé</span><span class="cp-val net" id="fc-net-est">—</span></div>
+    </div>
+    <button class="save-btn-m" id="save-btn" onclick="saveMonth()">Enregistrer</button>
+    <button onclick="clearMonth()" style="width:100%;padding:13px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--red);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer">Effacer ce mois</button>
+  </div>
+</div>
+
+<!-- ══ PAGE COMPTE PERSO ══ -->
+<div class="page" id="page-compte">
+<div class="page-pad">
+  <div><div style="font-size:20px;font-weight:800">Compte perso</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Solde, revenus, dépenses</div></div>
+
+  <!-- SOLDE -->
+  <div class="hero" style="background:linear-gradient(135deg,#0a1a2e,#1A1E28,#0D0F14);border:1px solid rgba(59,130,246,.3)">
+    <div class="hero-label" style="color:var(--accent2)">💳 Solde actuel</div>
+    <div class="hero-title" id="compte-solde">0 €</div>
+    <div class="hero-sub" id="compte-sub">Solde initial : <span id="compte-init-display">0 €</span></div>
+    <div class="hero-grid">
+      <div class="hero-stat"><div class="hero-stat-val" style="color:var(--green)" id="compte-rev">0 €</div><div class="hero-stat-lbl">Revenus mois</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" style="color:var(--red)" id="compte-dep">0 €</div><div class="hero-stat-lbl">Dépenses mois</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" style="color:var(--accent)" id="compte-bal">0 €</div><div class="hero-stat-lbl">Bilan mois</div></div>
+    </div>
+  </div>
+
+  <!-- SOLDE INITIAL -->
+  <div class="card">
+    <div class="param-row">
+      <div class="param-info"><div class="param-label">Solde initial</div><div class="param-desc">Montant de départ du compte</div></div>
+      <div class="param-inp-wrap"><input class="param-inp" type="number" id="compte-init-inp" inputmode="decimal" oninput="saveSoldeInit()"><span class="param-unit">€</span></div>
+    </div>
+  </div>
+
+  <!-- AJOUT OPÉRATION -->
+  <div class="card">
+    <div class="tog-row" style="margin-bottom:12px">
+      <button class="tog-btn active" id="op-mode-dep" onclick="setOpType('dep')">− Dépense</button>
+      <button class="tog-btn" id="op-mode-rev" onclick="setOpType('rev')">+ Revenu</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="text" id="op-name" placeholder="Description…" autocomplete="off"
+        style="flex:1;min-width:130px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-family:'Syne',sans-serif;font-size:.9rem;color:var(--text);outline:none">
+      <input type="number" id="op-amount" placeholder="0 €" min="0" step="0.5" inputmode="decimal"
+        style="width:100px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--text);text-align:right;outline:none;-webkit-appearance:none">
+      <input type="date" id="op-date"
+        style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 12px;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--text);outline:none">
+      <button onclick="addOp()" style="background:var(--accent);color:#000;border:none;border-radius:9px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;white-space:nowrap">+ Ajouter</button>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="op-cat-btn" onclick="setOpCat('Loyer')">🏠 Loyer</button>
+      <button class="op-cat-btn" onclick="setOpCat('Courses')">🛒 Courses</button>
+      <button class="op-cat-btn" onclick="setOpCat('Transport')">🚗 Transport</button>
+      <button class="op-cat-btn" onclick="setOpCat('Loisirs')">🎮 Loisirs</button>
+      <button class="op-cat-btn" onclick="setOpCat('Salaire')">💰 Salaire</button>
+      <button class="op-cat-btn" onclick="setOpCat('Autre')">📝 Autre</button>
+    </div>
+  </div>
+
+  <!-- DÉPENSES FIXES -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-size:14px;font-weight:700">📌 Charges fixes mensuelles</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Total : <span id="dep-total-fixed" style="color:var(--red);font-weight:700">0 €</span></div>
+      </div>
+      <button onclick="toggleSection('fixed-dep-body')" class="params-badge" style="cursor:pointer">▾</button>
+    </div>
+    <div id="fixed-dep-body" style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="dep-new-name" placeholder="Nom de la charge…" autocomplete="off"
+          style="flex:1;min-width:130px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-family:'Syne',sans-serif;font-size:.9rem;color:var(--text);outline:none">
+        <input type="number" id="dep-new-amount" placeholder="0 €" min="0" step="0.5" inputmode="decimal"
+          style="width:100px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--text);text-align:right;outline:none;-webkit-appearance:none">
+        <button onclick="addDep()" style="background:var(--accent);color:#000;border:none;border-radius:9px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;white-space:nowrap">+</button>
+      </div>
+      <div id="dep-expense-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- HISTORIQUE OPÉRATIONS -->
+  <div class="section-title">Historique opérations</div>
+  <div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="filter-btn active" id="filter-all" onclick="setOpFilter('all')">Tout</button>
+      <button class="filter-btn" id="filter-rev" onclick="setOpFilter('rev')">Revenus</button>
+      <button class="filter-btn" id="filter-dep" onclick="setOpFilter('dep')">Dépenses</button>
+    </div>
+    <div id="ops-list" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ PAGE SIMULATEUR ══ -->
+<div class="page" id="page-calc">
+<div class="page-pad">
+  <div><div style="font-size:20px;font-weight:800">Simulateur</div><div style="font-size:12px;color:var(--muted);margin-top:3px" id="calc-sub">CA ↔ Salaire net</div></div>
+  <div class="card">
+    <div class="tog-row">
+      <button class="tog-btn active" id="mode-ca" onclick="setMode('ca')">Brut/CA → Net</button>
+      <button class="tog-btn" id="mode-net" onclick="setMode('net')">Net → Brut/CA</button>
+    </div>
+    <div class="pas-row-m">
+      <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">PAS</span>
+      <input class="pas-inp" type="number" id="pas-rate" value="7" step="0.1" inputmode="decimal" oninput="runCalc()">
+      <span style="color:var(--muted);font-family:'DM Mono',monospace">%</span>
+      <div class="pas-presets-m">
+        <button class="pas-btn" onclick="setPas(0,this)">0%</button>
+        <button class="pas-btn" onclick="setPas(3,this)">3%</button>
+        <button class="pas-btn" onclick="setPas(7,this)">7%</button>
+        <button class="pas-btn" onclick="setPas(11,this)">11%</button>
+        <button class="pas-btn active" onclick="setPas(SAL.defaultPAS,this)" id="pas-btn-perso">—%</button>
+      </div>
+    </div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px" id="lbl-main">CA HT (€)</div>
+    <input class="big-inp-main" type="number" id="calc-main" placeholder="Saisir un montant…" inputmode="decimal" oninput="runCalc()">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px" id="lbl-out">Net payé estimé (€)</div>
+    <input class="big-inp-out" type="text" id="calc-output" readonly>
+    <div class="dec">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Décomposition</div>
+      <div class="dr" id="dr-ca-comm"><span class="dk">CA commissionnable</span><span class="dv acc" id="d-ca-comm">—</span></div>
+      <div id="paliers-detail"></div>
+      <div class="dr" id="dr-fixe"><span class="dk">Fixe mensuel</span><span class="dv" id="d-fixe-lbl">—</span></div>
+      <div class="dr"><span class="dk" style="font-weight:600;color:var(--text)">Brut</span><span class="dv acc" id="d-brut">—</span></div>
+      <div class="dr"><span class="dk i" id="d-charges-lbl">Charges</span><span class="dv r" id="d-charges">—</span></div>
+      <div class="dr"><span class="dk">Net avant PAS</span><span class="dv" id="d-net-avant">—</span></div>
+      <div class="dr"><span class="dk i">PAS (<span id="d-pas-pct">7</span>%)</span><span class="dv r" id="d-pas-amount">—</span></div>
+      <div class="dr hl"><span class="dk" style="font-weight:700;color:var(--text)">Net payé</span><span class="dv big" id="d-net-final">—</span></div>
+    </div>
+  </div>
+  <div class="section-title">Seuils clés</div>
+  <div class="seuil-grid" id="seuil-grid"></div>
+  <div class="chart-bloc"><div class="section-title">Courbe net vs <span id="curve-x-label">CA</span></div><div class="chart-h"><canvas id="chart-courbe"></canvas></div></div>
+</div>
+</div>
+
+<!-- ══ PAGE PARAMÈTRES ══ -->
+<div class="page" id="page-params">
+<div class="page-pad">
+  <div><div style="font-size:20px;font-weight:800">Paramètres</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Configure ton système de paie</div></div>
+
+  <!-- PROFIL -->
+  <div class="params-section">
+    <div class="params-header" onclick="toggleSection('profil-body')">
+      <div><div class="params-title">👤 Mon profil</div><div class="params-subtitle">Prénom, poste</div></div>
+      <span class="params-badge">▾</span>
+    </div>
+    <div class="params-body" id="profil-body">
+      <div class="params-sep"></div>
+      <div class="field-group"><div class="field-label">Prénom</div><input class="field-input" type="text" id="p-prenom" autocomplete="given-name" oninput="saveParams()"></div>
+      <div class="field-group"><div class="field-label">Poste / Intitulé</div><input class="field-input" type="text" id="p-poste" autocomplete="off" oninput="saveParams()"></div>
+    </div>
+  </div>
+
+  <!-- TYPE DE RÉMUNÉRATION -->
+  <div class="params-section">
+    <div class="params-header" onclick="toggleSection('type-body')">
+      <div><div class="params-title">🎯 Type de rémunération</div><div class="params-subtitle">Salaire fixe, commissions, mixte…</div></div>
+      <span class="params-badge">▾</span>
+    </div>
+    <div class="params-body" id="type-body">
+      <div class="params-sep"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="type-grid">
+        <button class="type-btn" data-type="fixe" onclick="setSalType('fixe')">💼 Fixe simple</button>
+        <button class="type-btn" data-type="commission" onclick="setSalType('commission')">📊 Commission seule</button>
+        <button class="type-btn" data-type="fixe_comm" onclick="setSalType('fixe_comm')">🔀 Fixe + Comm.</button>
+        <button class="type-btn" data-type="custom" onclick="setSalType('custom')">⚙️ Personnalisé</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.5;font-family:'DM Mono',monospace" id="type-desc"></div>
+    </div>
+  </div>
+
+  <!-- STRUCTURE SALAIRE -->
+  <div class="params-section">
+    <div class="params-header" onclick="toggleSection('sal-body')">
+      <div><div class="params-title">💶 Structure du salaire</div><div class="params-subtitle">Fixe, charges, PAS</div></div>
+      <span class="params-badge">▾</span>
+    </div>
+    <div class="params-body" id="sal-body">
+      <div class="params-sep"></div>
+      <div class="param-row" id="row-fixe">
+        <div class="param-info"><div class="param-label">Salaire fixe brut</div><div class="param-desc">Partie fixe mensuelle garantie (0 si commission seule)</div></div>
+        <div class="param-inp-wrap"><input class="param-inp" type="number" id="p-fixe" inputmode="decimal" oninput="saveParams();runCalc()"><span class="param-unit">€</span></div>
+      </div>
+      <div class="param-row">
+        <div class="param-info"><div class="param-label">Taux de charges sociales</div><div class="param-desc">% appliqué au brut pour obtenir le net imposable</div></div>
+        <div class="param-inp-wrap"><input class="param-inp" type="number" id="p-charges" inputmode="decimal" step="0.1" oninput="saveParams();runCalc()"><span class="param-unit">%</span></div>
+      </div>
+      <div class="param-row">
+        <div class="param-info"><div class="param-label">Taux PAS (impôt à la source)</div><div class="param-desc">Taux par défaut prélevé sur le net imposable</div></div>
+        <div class="param-inp-wrap"><input class="param-inp" type="number" id="p-pas" inputmode="decimal" step="0.1" oninput="saveParams();runCalc()"><span class="param-unit">%</span></div>
+      </div>
+      <div class="param-row" id="row-franchise">
+        <div class="param-info"><div class="param-label">Franchise CA</div><div class="param-desc">CA soustrait avant calcul des commissions (0 si pas de franchise)</div></div>
+        <div class="param-inp-wrap"><input class="param-inp" type="number" id="p-franchise" inputmode="decimal" oninput="saveParams();runCalc()"><span class="param-unit">€</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALIERS DYNAMIQUES -->
+  <div class="params-section" id="paliers-section">
+    <div class="params-header" onclick="toggleSection('comm-body')">
+      <div><div class="params-title">📈 Paliers de commissions</div><div class="params-subtitle">Jusqu'à 5 paliers progressifs</div></div>
+      <span class="params-badge">▾</span>
+    </div>
+    <div class="params-body" id="comm-body">
+      <div class="params-sep"></div>
+      <div id="paliers-list" style="display:flex;flex-direction:column;gap:10px"></div>
+      <button onclick="addPalier()" style="padding:10px;background:var(--surface2);border:1px dashed var(--border);border-radius:10px;color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer">+ Ajouter un palier</button>
+      <div style="background:var(--surface3);border-radius:10px;padding:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7" id="params-formula-preview"></div>
+    </div>
+  </div>
+
+  <!-- RÉSUMÉ FORMULE -->
+  <div style="background:var(--surface2);border:1px dashed var(--border);border-radius:14px;padding:14px;font-size:12px;color:var(--muted);line-height:1.8;font-family:'DM Mono',monospace;white-space:pre-line" id="formula-recap"></div>
+
+  <!-- EXPORT / IMPORT -->
+  <div class="params-section">
+    <div class="params-header" onclick="toggleSection('backup-body')">
+      <div><div class="params-title">💾 Sauvegarde</div><div class="params-subtitle">Export / import des données</div></div>
+      <span class="params-badge">▾</span>
+    </div>
+    <div class="params-body" id="backup-body" style="display:none">
+      <div class="params-sep"></div>
+      <button onclick="exportData()" style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer">📤 Exporter mes données (JSON)</button>
+      <label style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--accent2);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;text-align:center;display:block">
+        📥 Importer un fichier
+        <input type="file" accept=".json" onchange="importData(event)" style="display:none">
+      </label>
+    </div>
+  </div>
+
+  <!-- ZONE DANGER -->
+  <div class="params-section">
+    <div class="params-header" onclick="toggleSection('danger-body')">
+      <div><div class="params-title" style="color:var(--red)">🗑️ Zone dangereuse</div><div class="params-subtitle">Réinitialisation</div></div>
+      <span class="params-badge" style="background:rgba(239,68,68,.1);color:var(--red)">▾</span>
+    </div>
+    <div class="params-body" id="danger-body" style="display:none">
+      <div class="params-sep"></div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5">Efface les données de paie et opérations. Les paramètres sont conservés.</div>
+      <button onclick="resetData()" style="width:100%;padding:12px;background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer">Effacer toutes les données</button>
+      <button onclick="resetAll()" style="width:100%;padding:12px;background:rgba(239,68,68,.15);border:1px solid var(--red);border-radius:10px;color:var(--red);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer">Tout réinitialiser (paramètres inclus)</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;padding:10px">Ma Paie v2.0 — Universel</div>
+</div>
+</div>
+
+</div><!-- fin .main -->
+
+<script src="app.js"></script>
+</body>
+</html>
