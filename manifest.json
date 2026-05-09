@@ -1,15 +1,13 @@
 {
-  "name": "Ma Paie",
-  "short_name": "Ma Paie",
-  "description": "Simulateur de paie universel paramétrable",
+  "name": "MaPaie",
+  "short_name": "MaPaie",
+  "description": "Pilote ton CA, suis ta paie, gère tes commandes",
   "start_url": "./",
-  "scope": "./",
   "display": "standalone",
+  "background_color": "#0F1117",
+  "theme_color": "#0F1117",
   "orientation": "portrait",
-  "background_color": "#0D0F14",
-  "theme_color": "#13161D",
   "lang": "fr",
-  "categories": ["finance", "productivity", "business"],
   "icons": [
     {
       "src": "icon-192.png",
