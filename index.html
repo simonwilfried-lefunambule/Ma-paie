@@ -6,12 +6,8 @@
 <meta name="theme-color" content="#0F1117">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MaPaie">
-<meta name="description" content="Pilote ton CA, suis ta paie, gère tes commandes">
 <title>MaPaie — Pilote ton chiffre d'affaires</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.png">
 <style>
 /* ════════════════════════════════════════════════════════════
    MaPaie v5.0 — Design system
@@ -1546,34 +1542,6 @@ input[type="date"],input[type="time"]{
 
 /* Active state plus rapide sur iOS (réduction du délai de 300ms) */
 *{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-
-/* ════════════════════════════════════════════════════════════
-   CHARGES FRACTIONNÉES
-═══════════════════════════════════════════════════════════════ */
-.dep-edit-extended{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--surface2);border-radius:12px;border:1px solid var(--accent)}
-.dep-edit-row{display:flex;gap:6px}
-.dep-edit-split{display:flex;align-items:center}
-.dep-edit-split-lbl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-soft);cursor:pointer}
-.dep-edit-split-lbl input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent)}
-.dep-edit-split-opts{display:flex;flex-direction:column;gap:6px;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;border:1px solid var(--border)}
-.dep-edit-mini-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-.dep-edit-mini-input{background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px;width:100%}
-.dep-edit-preview{font-size:12px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;text-align:center;padding:4px}
-
-/* Item fractionné */
-.split-item{border-color:rgba(59,130,246,.3);background:linear-gradient(135deg,rgba(59,130,246,.05),var(--surface))}
-.dep-item-status.split{color:var(--blue);font-size:11px}
-.dep-split-bar{height:6px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;margin-top:6px}
-.dep-split-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:4px;transition:width .5s ease}
-.dep-split-info{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:3px}
-
-/* Sous-menu déduction partielle dans l'éditeur de charge */
-.dep-partial-section{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}
-.dep-partial-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--blue)}
-.dep-partial-row{display:flex;align-items:center;gap:8px}
-.dep-partial-input{flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px}
-.dep-partial-hint{font-size:12px;color:var(--muted);flex-shrink:0}
-.dep-partial-preview{font-size:12px;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace}
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" onerror="this.onerror=null;this.src='chart.umd.js'"></script>
@@ -3450,9 +3418,8 @@ function netFromCA(ca,tp){return calcSal(ca,tp).net;}
 
 // Charges helpers
 function totalDeps(){return deps.reduce((s,d)=>s+d.amount,0);}
-// Inclut les paiements partiels (paidAmount) pour les charges fractionnées
-function totalDepsPaid(){return deps.reduce((s,d)=>s+(d.installments>1?(d.paidAmount||0):(d.paid?d.amount:0)),0);}
-function totalDepsUnpaid(){return totalDeps()-totalDepsPaid();}
+function totalDepsPaid(){return deps.filter(d=>d.paid).reduce((s,d)=>s+d.amount,0);}
+function totalDepsUnpaid(){return deps.filter(d=>!d.paid).reduce((s,d)=>s+d.amount,0);}
 
 // ════════════════════════════════════════════════════════════
 //  NAVIGATION
@@ -4941,7 +4908,8 @@ function renderDeps(){
   const list=document.getElementById('dep-list');
   if(deps.length===0){list.innerHTML='';return;}
   list.innerHTML='';
-  if(deps.some(d=>d.paid||(d.paidAmount&&d.paidAmount>0))){
+  // Bouton "Tout décocher" si au moins une charge est payée
+  if(deps.some(d=>d.paid)){
     const reset=document.createElement('button');
     reset.className='dep-reset-btn';
     reset.textContent='↻ Tout décocher (nouveau mois)';
@@ -4951,68 +4919,33 @@ function renderDeps(){
   deps.forEach(exp=>{
     const div=document.createElement('div');
     if(depEditId===exp.id){
-      // Mode édition : nom + montant + déduction partielle
-      const paidAmount=exp.paidAmount||0;
-      div.className='dep-edit dep-edit-extended';
+      div.className='dep-edit';
       div.innerHTML=`
-        <input type="text" value="${exp.name.replace(/"/g,'&quot;')}" id="ed-name-${exp.id}" placeholder="Nom de la charge">
-        <input type="number" value="${exp.amount}" step="0.01" inputmode="decimal" id="ed-amt-${exp.id}" placeholder="Montant total (€)">
-        <div class="dep-partial-section">
-          <div class="dep-partial-lbl">💳 Déjà payé en partie ?</div>
-          <div class="dep-partial-row">
-            <input type="number" value="${paidAmount||''}" step="0.01" inputmode="decimal" id="ed-paid-${exp.id}" placeholder="0,00 €" class="dep-partial-input">
-            <span class="dep-partial-hint">€ déjà payés</span>
-          </div>
-          ${paidAmount>0?`<div class="dep-partial-preview">Reste : ${fmtC(Math.max(exp.amount-paidAmount,0))}</div>`:''}
-        </div>
-        <div style="display:flex;gap:6px;margin-top:4px">
-          <button onclick="saveDep(${exp.id})" style="flex:1;background:var(--accent);color:#000;min-height:44px;border-radius:8px;font-weight:700">✓ OK</button>
-          <button onclick="cancelDepEdit()" style="flex:1;background:var(--surface3);color:var(--muted);min-height:44px;border-radius:8px;font-weight:700">✕</button>
-        </div>`;
+        <input type="text" value="${exp.name.replace(/"/g,'&quot;')}" id="ed-name-${exp.id}" onkeydown="if(event.key==='Enter')saveDep(${exp.id})">
+        <input type="number" value="${exp.amount}" step="0.01" inputmode="decimal" id="ed-amt-${exp.id}" onkeydown="if(event.key==='Enter')saveDep(${exp.id})">
+        <button onclick="saveDep(${exp.id})" style="background:var(--accent);color:#000">✓</button>
+        <button onclick="cancelDepEdit()" style="background:var(--surface3);color:var(--muted)">✕</button>`;
     } else {
-      const paidAmount=exp.paidAmount||0;
-      const isPaidFull=!!exp.paid;
-      const hasPartial=paidAmount>0&&paidAmount<exp.amount;
-      const remaining=Math.max(exp.amount-paidAmount,0);
-      const paidPct=exp.amount>0?Math.round(paidAmount/exp.amount*100):0;
-
-      let statusHtml, amountHtml, extraHtml='';
-      if(isPaidFull){
-        statusHtml=`<div class="dep-item-status">✅ Payé</div>`;
-        amountHtml=`<div class="dep-item-amount paid">−${fmtC(exp.amount)}</div>`;
-      } else if(hasPartial){
-        statusHtml=`<div class="dep-item-status" style="color:var(--blue)">💳 ${fmtC(paidAmount)} payé · ${fmtC(remaining)} restant</div>`;
-        amountHtml=`<div class="dep-item-amount unpaid">−${fmtC(exp.amount)}</div>`;
-        extraHtml=`
-          <div class="dep-split-bar">
-            <div class="dep-split-fill" style="width:${paidPct}%"></div>
-          </div>`;
-      } else {
-        statusHtml=`<div class="dep-item-status">⏳ À payer</div>`;
-        amountHtml=`<div class="dep-item-amount unpaid">−${fmtC(exp.amount)}</div>`;
-      }
-
-      div.className=`dep-item ${isPaidFull?'paid':'unpaid'}`;
+      const isPaid=!!exp.paid;
+      div.className='dep-item '+(isPaid?'paid':'unpaid');
       div.onclick=(e)=>{if(e.target.tagName!=='BUTTON')toggleDepPaid(exp.id);};
       div.innerHTML=`
         <div class="dep-item-info">
-          <div class="dep-item-name">${escapeHtml(exp.name)}</div>
-          ${statusHtml}
-          ${extraHtml}
+          <div class="dep-item-name ${isPaid?'paid':''}">${escapeHtml(exp.name)}</div>
+          <div class="dep-item-status">${isPaid?'✅ Payé':'⏳ À payer'}</div>
         </div>
-        ${amountHtml}
+        <div class="dep-item-amount ${isPaid?'paid':'unpaid'}">−${fmtC(exp.amount)}</div>
         <button class="dep-item-btn" onclick="event.stopPropagation();editDep(${exp.id})">✎</button>
         <button class="dep-item-btn del" onclick="event.stopPropagation();deleteDep(${exp.id})">✕</button>`;
     }
     list.appendChild(div);
   });
 }
-
 function addDep(){
   const name=document.getElementById('dep-new-name').value.trim();
   const amount=parseFloatFR(document.getElementById('dep-new-amount').value);
   if(!name||amount<=0)return;
-  deps.push({id:depNextId++,name,amount,paid:false,paidAmount:0});
+  deps.push({id:depNextId++,name,amount,paid:false});
   sv('mp5_deps',deps);sv('mp5_depid',depNextId);
   document.getElementById('dep-new-name').value='';
   document.getElementById('dep-new-amount').value='';
@@ -5024,17 +4957,12 @@ function saveDep(id){
   const exp=deps.find(d=>d.id===id);if(!exp)return;
   const nm=document.getElementById('ed-name-'+id).value.trim();
   const am=parseFloatFR(document.getElementById('ed-amt-'+id).value);
-  const paidAmt=parseFloatFR(document.getElementById('ed-paid-'+id).value)||0;
   if(nm)exp.name=nm;
   if(am>0)exp.amount=am;
-  // Montant déjà payé (déduction partielle)
-  exp.paidAmount=Math.min(paidAmt,exp.amount);
-  // Si tout est payé → cocher automatiquement
-  if(exp.paidAmount>=exp.amount-0.01){
-    exp.paidAmount=exp.amount;
-    exp.paid=true;
-  } else {
-    exp.paid=false;
+  // Si la charge est cochée, mettre à jour l'opération liée
+  if(exp.paid && compte.ops){
+    const op=compte.ops.find(o=>o.linkedDepId===id);
+    if(op){op.name=exp.name+' (charge fixe)';op.amount=exp.amount;sv('mp5_compte',compte);}
   }
   depEditId=null;
   sv('mp5_deps',deps);
@@ -5047,26 +4975,28 @@ function deleteDep(id){
   sv('mp5_deps',deps);sv('mp5_compte',compte);
   renderDeps();renderCompte();renderHomeIfActive();
 }
+// Toggle : marquer comme payé/non payé + créer/retirer l'opération bancaire liée
 function toggleDepPaid(id){
   const exp=deps.find(d=>d.id===id);if(!exp)return;
   exp.paid=!exp.paid;
   if(!compte.ops)compte.ops=[];
   const today=new Date().toISOString().slice(0,10);
   if(exp.paid){
-    exp.paidAmount=exp.amount;
+    // Créer opération liée qui débite le solde
     compte.ops.push({id:opNextId++,name:exp.name+' (charge fixe)',amount:exp.amount,date:today,type:'dep',cat:'charge_fixe',linkedDepId:exp.id});
     sv('mp5_opid',opNextId);
   } else {
-    exp.paidAmount=0;
+    // Retirer l'opération liée
     compte.ops=compte.ops.filter(o=>o.linkedDepId!==exp.id);
   }
   sv('mp5_deps',deps);sv('mp5_compte',compte);
   renderDeps();renderCompte();renderHomeIfActive();
 }
+// Décocher toutes les charges (nouveau mois)
 function resetAllDepPaid(){
-  if(!confirm('Remettre toutes les charges à zéro (nouveau mois) ?\nLes opérations bancaires liées seront supprimées.'))return;
+  if(!confirm('Décocher toutes les charges (nouveau mois) ?\nLes opérations bancaires liées seront supprimées.'))return;
   if(compte.ops)compte.ops=compte.ops.filter(o=>!o.linkedDepId);
-  deps.forEach(d=>{d.paid=false;d.paidAmount=0;});
+  deps.forEach(d=>{d.paid=false;});
   sv('mp5_deps',deps);sv('mp5_compte',compte);
   renderDeps();renderCompte();renderHomeIfActive();
 }
