@@ -6,8 +6,12 @@
 <meta name="theme-color" content="#0F1117">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MaPaie">
+<meta name="description" content="Pilote ton CA, suis ta paie, gère tes commandes">
 <title>MaPaie — Pilote ton chiffre d'affaires</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
 <style>
 /* ════════════════════════════════════════════════════════════
    MaPaie v5.0 — Design system
@@ -81,6 +85,16 @@ body{
 
 /* Anti-zoom iOS : Safari zoome si font-size < 16px sur les inputs */
 input,textarea,select{font-size:16px !important}
+/* Empêche l'écriture à l'envers sur Android/iOS pour tous les inputs numériques */
+input[type="number"]{
+  direction:ltr;
+  text-align:right;
+  unicode-bidi:plaintext;
+}
+input[type="text"],input[type="tel"],input[type="date"],input[type="time"]{
+  direction:ltr;
+  unicode-bidi:plaintext;
+}
 
 /* ════════════════════════════════════════════════════════════
    NAVIGATION BAR
@@ -561,7 +575,7 @@ input,textarea,select{font-size:16px !important}
 .day-name{font-size:13px;font-weight:700;color:var(--text)}
 .day-date{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:1px}
 .day-input-wrap{flex:1;display:flex;align-items:center;gap:6px}
-.day-input{flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;text-align:right;outline:none;-webkit-appearance:none;font-weight:600}
+.day-input{flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px;text-align:right;outline:none;-webkit-appearance:none;appearance:none;font-weight:600;direction:ltr}
 .day-input:focus{border-color:var(--accent);background:rgba(245,200,66,.05)}
 .day-input.has-value{color:var(--accent)}
 .day-unit{font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-shrink:0}
@@ -1543,6 +1557,99 @@ input[type="date"],input[type="time"]{
 /* Active state plus rapide sur iOS (réduction du délai de 300ms) */
 *{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 
+/* ════════════════════════════════════════════════════════════
+   CHARGES FRACTIONNÉES
+═══════════════════════════════════════════════════════════════ */
+.dep-edit-extended{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--surface2);border-radius:12px;border:1px solid var(--accent)}
+.dep-edit-row{display:flex;gap:6px}
+.dep-edit-split{display:flex;align-items:center}
+.dep-edit-split-lbl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-soft);cursor:pointer}
+.dep-edit-split-lbl input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent)}
+.dep-edit-split-opts{display:flex;flex-direction:column;gap:6px;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;border:1px solid var(--border)}
+.dep-edit-mini-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.dep-edit-mini-input{background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px;width:100%}
+.dep-edit-preview{font-size:12px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;text-align:center;padding:4px}
+
+/* Item fractionné */
+.split-item{border-color:rgba(59,130,246,.3);background:linear-gradient(135deg,rgba(59,130,246,.05),var(--surface))}
+.dep-item-status.split{color:var(--blue);font-size:11px}
+.dep-split-bar{height:6px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;margin-top:6px}
+.dep-split-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:4px;transition:width .5s ease}
+.dep-split-info{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:3px}
+
+/* Sous-menu déduction partielle dans l'éditeur de charge */
+.dep-partial-section{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.dep-partial-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--blue)}
+.dep-partial-row{display:flex;align-items:center;gap:8px}
+.dep-partial-input{flex:1;background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px}
+.dep-partial-hint{font-size:12px;color:var(--muted);flex-shrink:0}
+.dep-partial-preview{font-size:12px;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace}
+
+/* Séparateur d'année dans la liste des semaines */
+.weeks-year-sep{
+  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);padding:14px 4px 6px;
+  border-bottom:1px solid rgba(245,200,66,.2);
+  margin-bottom:4px;
+}
+
+/* Semaines avec données */
+.week-item.has-data{border-color:rgba(34,197,94,.2)}
+.week-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.week-item-bar{width:60px;height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.week-item-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:4px}
+.week-item-amount.empty{color:var(--blue);font-size:11px;font-weight:600;font-style:normal}
+
+/* Tag semaine active dans le titre de la carte */
+.week-active-tag{
+  display:inline-block;
+  font-size:10px;font-weight:800;
+  letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 8px;border-radius:6px;
+  margin-left:8px;vertical-align:middle;
+}
+.week-active-tag.current{background:var(--accent);color:#000}
+.week-active-tag.past{background:rgba(59,130,246,.2);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+.week-active-tag.future{background:rgba(168,85,247,.2);color:var(--purple);border:1px solid rgba(168,85,247,.3)}
+
+/* ════════════════════════════════════════════════════════════
+   DASHBOARD ÉVOLUTION
+═══════════════════════════════════════════════════════════════ */
+
+/* Cards dashboard */
+.db-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.db-card-head{display:flex;flex-direction:column;gap:2px}
+.db-card-title{font-size:14px;font-weight:700;color:var(--text)}
+.db-card-sub{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.db-chart-wrap{position:relative;height:200px;width:100%}
+.db-chart-wrap canvas{max-height:200px}
+
+/* KPI 6 cases */
+.db-kpi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.db-kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+.db-kpi-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.db-kpi-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--text);line-height:1.1}
+.db-kpi-lbl{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);line-height:1.2;text-align:center}
+
+/* Distribution */
+.db-distrib{display:flex;flex-direction:column;gap:8px}
+.db-distrib-row{display:flex;align-items:center;gap:8px}
+.db-distrib-lbl{font-size:11px;color:var(--text-soft);width:80px;flex-shrink:0}
+.db-distrib-bar-wrap{flex:1;background:rgba(255,255,255,.06);border-radius:6px;height:10px;overflow:hidden}
+.db-distrib-bar{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.25,.8,.25,1)}
+.db-distrib-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);width:24px;text-align:right;flex-shrink:0}
+
+/* Tableau dashboard */
+.db-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.db-table{width:100%;border-collapse:collapse;font-size:12px}
+.db-table th{padding:8px 6px;text-align:left;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap}
+.db-table td{padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.db-table tr:last-child td{border-bottom:none}
+.db-table tr.row-ok td:first-child{border-left:3px solid var(--green)}
+.db-table tr.row-low td:first-child{border-left:3px solid var(--red)}
+.db-table tr.row-mid td:first-child{border-left:3px solid var(--accent)}
+.db-trend{font-size:14px;line-height:1}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" onerror="this.onerror=null;this.src='chart.umd.js'"></script>
 </head>
@@ -1606,7 +1713,7 @@ input[type="date"],input[type="time"]{
       <div class="ob-fields">
         <label class="ob-field">
           <span class="ob-lbl">Objectif CA mensuel (€)</span>
-          <input class="ob-inp ob-inp-big" type="number" id="ob-obj" placeholder="16000" inputmode="decimal">
+          <input dir="ltr" class="ob-inp ob-inp-big" type="number" id="ob-obj" placeholder="16000" inputmode="decimal">
         </label>
         <div class="ob-preview" id="ob-preview">Saisis ton objectif pour voir le net estimé</div>
       </div>
@@ -1723,7 +1830,7 @@ input[type="date"],input[type="time"]{
         <button class="edit-obj-tab" id="edit-obj-tab-net" onclick="setObjEditMode('net')">💰 Net</button>
       </div>
       <div class="obj-input-row">
-        <input type="number" id="edit-obj-input" class="edit-obj-input" inputmode="decimal" step="100" oninput="previewObjEdit()">
+        <input dir="ltr" type="number" id="edit-obj-input" class="edit-obj-input" inputmode="decimal" step="100" oninput="previewObjEdit()">
         <button class="btn-save-obj" onclick="saveObjEdit()" id="obj-save-btn">💾</button>
       </div>
       <div class="edit-obj-preview" id="edit-obj-preview">—</div>
@@ -1918,9 +2025,9 @@ input[type="date"],input[type="time"]{
   <div class="header-row">
     <div class="header-left">
       <div class="header-greeting">📊 Évolution</div>
-      <div class="header-sub">Tes performances dans le temps</div>
+      <div class="header-sub">Tableau de bord analytique</div>
     </div>
-    <button class="header-btn" onclick="goPage('params')" aria-label="Paramètres">⚙️</button>
+    <button class="header-btn" onclick="goPage('params')">⚙️</button>
   </div>
 
   <!-- Sélecteur année -->
@@ -1928,25 +2035,21 @@ input[type="date"],input[type="time"]{
     <button class="year-arrow" onclick="changeYear(-1)">‹</button>
     <div class="year-current">
       <select id="evol-year-select" onchange="switchYear(this.value)" class="year-select"></select>
-      <button class="year-add-btn" onclick="addYear()" title="Ajouter une année">+</button>
+      <button class="year-add-btn" onclick="addYear()">+</button>
     </div>
     <button class="year-arrow" onclick="changeYear(1)">›</button>
   </div>
 
-  <!-- 🏆 BILAN SPORT DE L'ANNÉE -->
+  <!-- ① BILAN SPORT -->
   <div class="evol-sport-card">
     <div class="evol-sport-tag" id="evol-sport-tag">🏆 BILAN ANNÉE</div>
     <div class="evol-sport-headline" id="evol-sport-headline">Saisis tes mois pour voir ta perf</div>
-
-    <!-- Comparaison vs année N-1 -->
     <div class="evol-vs-prev" id="evol-vs-prev" style="display:none">
       <div class="evol-vs-label">VS <span id="evol-vs-year">2025</span></div>
       <div class="evol-vs-arrow" id="evol-vs-arrow">↑</div>
       <div class="evol-vs-pct" id="evol-vs-pct">+0%</div>
       <div class="evol-vs-detail" id="evol-vs-detail">—</div>
     </div>
-
-    <!-- Momentum (3 derniers mois) -->
     <div class="evol-momentum" id="evol-momentum">
       <div class="evol-momentum-tag">📈 Momentum 3 derniers mois</div>
       <div class="evol-momentum-bars" id="evol-momentum-bars"></div>
@@ -1954,40 +2057,114 @@ input[type="date"],input[type="time"]{
     </div>
   </div>
 
-  <!-- Hero bilan année -->
-  <div class="hero-bilan">
-    <div class="hero-bilan-row">
-      <div class="hero-bilan-col">
-        <div class="hero-bilan-tag">📊 CA total</div>
-        <div class="hero-bilan-val" style="color:var(--accent)" id="evol-ca-total">— €</div>
-      </div>
-      <div class="hero-bilan-col">
-        <div class="hero-bilan-tag">💰 Net total</div>
-        <div class="hero-bilan-val" style="color:var(--green)" id="evol-net-total">— €</div>
-      </div>
+  <!-- ② KPI 6 CHIFFRES CLÉS -->
+  <div class="db-kpi-grid">
+    <div class="db-kpi">
+      <div class="db-kpi-icon" style="background:linear-gradient(135deg,#F5C842,#FF9500)">📊</div>
+      <div class="db-kpi-val" id="kpi-ca-total">— €</div>
+      <div class="db-kpi-lbl">CA total</div>
     </div>
-    <div class="hero-bilan-foot">
-      <span><span id="evol-mois-saisis">0</span>/12 mois saisis</span>
-      <span>·</span>
-      <span><span id="evol-mois-ok">0</span> mois objectif</span>
+    <div class="db-kpi">
+      <div class="db-kpi-icon" style="background:linear-gradient(135deg,#22C55E,#16A34A)">💰</div>
+      <div class="db-kpi-val" id="kpi-net-total">— €</div>
+      <div class="db-kpi-lbl">Net total</div>
     </div>
-    <div class="hero-bilan-row" style="margin-top:4px;border-top:1px solid var(--border);padding-top:10px">
-      <div class="hero-bilan-col">
-        <div class="hero-bilan-tag">📊 CA moyen</div>
-        <div class="hero-bilan-val" style="color:var(--accent);font-size:18px" id="evol-ca-avg">— €</div>
-        <div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px">/ mois</div>
-      </div>
-      <div class="hero-bilan-col">
-        <div class="hero-bilan-tag">💰 Net moyen</div>
-        <div class="hero-bilan-val" style="color:var(--green);font-size:18px" id="evol-net-avg">— €</div>
-        <div style="font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px">/ mois</div>
-      </div>
+    <div class="db-kpi">
+      <div class="db-kpi-icon" style="background:linear-gradient(135deg,#3B82F6,#2563EB)">📅</div>
+      <div class="db-kpi-val" id="kpi-ca-avg">— €</div>
+      <div class="db-kpi-lbl">CA moyen/mois</div>
+    </div>
+    <div class="db-kpi">
+      <div class="db-kpi-icon" style="background:linear-gradient(135deg,#A855F7,#7C3AED)">🎯</div>
+      <div class="db-kpi-val" id="kpi-mois-ok">0/12</div>
+      <div class="db-kpi-lbl">Mois objectif</div>
+    </div>
+    <div class="db-kpi">
+      <div class="db-kpi-icon" style="background:linear-gradient(135deg,#F97316,#EA580C)">📈</div>
+      <div class="db-kpi-val" id="kpi-best-month">— €</div>
+      <div class="db-kpi-lbl">Meilleur mois</div>
+    </div>
+    <div class="db-kpi">
+      <div class="db-kpi-icon" style="background:linear-gradient(135deg,#EF4444,#DC2626)">📉</div>
+      <div class="db-kpi-val" id="kpi-worst-month">— €</div>
+      <div class="db-kpi-lbl">Mois le plus bas</div>
     </div>
   </div>
 
-  <!-- Stats globales toutes années -->
-  <div class="card">
-    <div class="card-title">🌍 Toutes mes années</div>
+  <!-- ③ GRAPHIQUE CA MENSUEL (barres) -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">📊 CA mensuel vs objectif</div>
+      <div class="db-card-sub" id="chart-ca-sub">—</div>
+    </div>
+    <div class="db-chart-wrap">
+      <canvas id="evol-chart-ca"></canvas>
+    </div>
+  </div>
+
+  <!-- ④ GRAPHIQUE NET (courbe) -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">💰 Net mensuel</div>
+      <div class="db-card-sub" id="chart-net-sub">—</div>
+    </div>
+    <div class="db-chart-wrap">
+      <canvas id="evol-chart-net"></canvas>
+    </div>
+  </div>
+
+  <!-- ⑤ GRAPHIQUE CA CUMULÉ -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">📈 CA cumulé dans l'année</div>
+      <div class="db-card-sub" id="chart-cumul-sub">vs objectif annuel</div>
+    </div>
+    <div class="db-chart-wrap">
+      <canvas id="evol-chart-cumul"></canvas>
+    </div>
+  </div>
+
+  <!-- ⑥ COMPARAISON MULTI-ANNÉES (si plusieurs années) -->
+  <div class="db-card" id="chart-multiyear-card" style="display:none">
+    <div class="db-card-head">
+      <div class="db-card-title">🗓️ Comparaison années</div>
+      <div class="db-card-sub">CA mensuel par année</div>
+    </div>
+    <div class="db-chart-wrap">
+      <canvas id="evol-chart-multiyear"></canvas>
+    </div>
+  </div>
+
+  <!-- ⑦ DISTRIBUTION CA (jauges par tranche) -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">🎯 Distribution des mois</div>
+      <div class="db-card-sub">Répartition par rapport à l'objectif</div>
+    </div>
+    <div class="db-distrib" id="db-distrib"></div>
+  </div>
+
+  <!-- ⑧ HEATMAP -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">🔥 Heatmap des performances</div>
+      <div class="db-card-sub">Toutes tes années</div>
+    </div>
+    <div class="heatmap" id="evol-heatmap"></div>
+    <div class="heatmap-legend">
+      <span><span class="hm-sw hm-empty"></span>Vide</span>
+      <span><span class="hm-sw hm-low"></span>&lt;50%</span>
+      <span><span class="hm-sw hm-mid"></span>50-80%</span>
+      <span><span class="hm-sw hm-high"></span>80-100%</span>
+      <span><span class="hm-sw hm-top"></span>≥100%</span>
+    </div>
+  </div>
+
+  <!-- ⑨ STATS GLOBALES TOUTES ANNÉES -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">🌍 Vue globale toutes années</div>
+    </div>
     <div class="all-years-grid">
       <div class="all-years-item">
         <div class="all-years-lbl">CA moyen</div>
@@ -2008,37 +2185,22 @@ input[type="date"],input[type="time"]{
     <div class="all-years-foot" id="all-years-foot">—</div>
   </div>
 
-  <!-- Heatmap -->
-  <div class="card">
-    <div class="card-title">🔥 Heatmap des mois</div>
-    <div class="heatmap" id="evol-heatmap"></div>
-    <div class="heatmap-legend">
-      <span><span class="hm-sw hm-empty"></span>Vide</span>
-      <span><span class="hm-sw hm-low"></span>&lt;50%</span>
-      <span><span class="hm-sw hm-mid"></span>50-80%</span>
-      <span><span class="hm-sw hm-high"></span>80-100%</span>
-      <span><span class="hm-sw hm-top"></span>≥100%</span>
+  <!-- ⑩ TABLEAU DÉTAILLÉ -->
+  <div class="db-card">
+    <div class="db-card-head">
+      <div class="db-card-title">📋 Détail mois par mois</div>
     </div>
-  </div>
-
-  <!-- Graphique CA vs objectif -->
-  <div class="card">
-    <div class="card-title">📊 CA mensuel vs objectif</div>
-    <div class="chart-wrap"><canvas id="evol-chart-ca"></canvas></div>
-  </div>
-
-  <!-- Graphique Net cumul -->
-  <div class="card">
-    <div class="card-title">💰 Net cumulé sur l'année</div>
-    <div class="chart-wrap"><canvas id="evol-chart-net"></canvas></div>
-  </div>
-
-  <!-- Tableau détaillé -->
-  <div class="card card-table">
-    <div class="card-title">📋 Détail mensuel</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Mois</th><th>CA</th><th>Net</th><th>Δ Obj</th><th>Solde</th></tr></thead>
+    <div class="db-table-wrap">
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>Mois</th>
+            <th>CA</th>
+            <th>Net</th>
+            <th>vs Obj</th>
+            <th>Tendance</th>
+          </tr>
+        </thead>
         <tbody id="evol-tbody"></tbody>
       </table>
     </div>
@@ -2146,7 +2308,7 @@ input[type="date"],input[type="time"]{
       </div>
 
       <!-- Bouton générer texto -->
-      <button class="btn-primary btn-texto" onclick="openTextoGen()">✉️ Générer un texto pour partager</button>
+      <button class="btn-primary btn-texto" onclick="openTextoGen()">📤 Envoyer CA semaine</button>
 
       <!-- Stats hebdomadaires de l'année -->
       <div class="card">
@@ -2203,7 +2365,7 @@ input[type="date"],input[type="time"]{
         <span class="form-required-lbl">📊 CA HT</span>
         <span class="form-required-tag">principal</span>
       </div>
-      <input class="form-required-input" type="number" id="f-ca" inputmode="decimal" placeholder="Ex : 16000" oninput="recalcForm()">
+      <input dir="ltr" class="form-required-input" type="number" id="f-ca" inputmode="decimal" placeholder="Ex : 16000" oninput="recalcForm()">
       <div class="form-required-hint" id="f-ca-hint">Saisis ton chiffre d'affaires du mois</div>
     </div>
 
@@ -2222,15 +2384,15 @@ input[type="date"],input[type="time"]{
       <span class="form-toggle-arrow" id="form-toggle-arrow">▾</span>
     </div>
     <div class="form-detail" id="form-detail" style="display:none">
-      <label class="form-field"><span>💰 Net payé (€)</span><input class="form-input" type="number" id="f-net-paye" inputmode="decimal" placeholder="optionnel"></label>
-      <label class="form-field"><span>Brut (€)</span><input class="form-input" type="number" id="f-brut" inputmode="decimal" placeholder="optionnel"></label>
-      <label class="form-field"><span>Net imposable (€)</span><input class="form-input" type="number" id="f-net-imposable" inputmode="decimal" placeholder="optionnel"></label>
-      <label class="form-field"><span>Net avant PAS (€)</span><input class="form-input" type="number" id="f-net-avant-pas" inputmode="decimal" placeholder="optionnel"></label>
-      <label class="form-field"><span>PAS prélevé (€)</span><input class="form-input" type="number" id="f-pas" inputmode="decimal" placeholder="optionnel"></label>
-      <label class="form-field"><span>Taux PAS (%)</span><input class="form-input" type="number" id="f-taux-pas" inputmode="decimal" step="0.1" placeholder="optionnel" oninput="recalcForm()"></label>
-      <label class="form-field"><span>Heures sup / Primes (€)</span><input class="form-input" type="number" id="f-prime" inputmode="decimal" placeholder="optionnel"></label>
-      <label class="form-field"><span>Jours CP pris</span><input class="form-input" type="number" id="f-cp" inputmode="numeric" placeholder="optionnel"></label>
-      <label class="form-field"><span>Titres-restaurant</span><input class="form-input" type="number" id="f-tr" inputmode="numeric" placeholder="optionnel"></label>
+      <label class="form-field"><span>💰 Net payé (€)</span><input dir="ltr" class="form-input" type="number" id="f-net-paye" inputmode="decimal" placeholder="optionnel"></label>
+      <label class="form-field"><span>Brut (€)</span><input dir="ltr" class="form-input" type="number" id="f-brut" inputmode="decimal" placeholder="optionnel"></label>
+      <label class="form-field"><span>Net imposable (€)</span><input dir="ltr" class="form-input" type="number" id="f-net-imposable" inputmode="decimal" placeholder="optionnel"></label>
+      <label class="form-field"><span>Net avant PAS (€)</span><input dir="ltr" class="form-input" type="number" id="f-net-avant-pas" inputmode="decimal" placeholder="optionnel"></label>
+      <label class="form-field"><span>PAS prélevé (€)</span><input dir="ltr" class="form-input" type="number" id="f-pas" inputmode="decimal" placeholder="optionnel"></label>
+      <label class="form-field"><span>Taux PAS (%)</span><input dir="ltr" class="form-input" type="number" id="f-taux-pas" inputmode="decimal" step="0.1" placeholder="optionnel" oninput="recalcForm()"></label>
+      <label class="form-field"><span>Heures sup / Primes (€)</span><input dir="ltr" class="form-input" type="number" id="f-prime" inputmode="decimal" placeholder="optionnel"></label>
+      <label class="form-field"><span>Jours CP pris</span><input dir="ltr" class="form-input" type="number" id="f-cp" inputmode="numeric" placeholder="optionnel"></label>
+      <label class="form-field"><span>Titres-restaurant</span><input dir="ltr" class="form-input" type="number" id="f-tr" inputmode="numeric" placeholder="optionnel"></label>
       <label class="form-field"><span>Notes</span><input class="form-input" type="text" id="f-note" placeholder="absences, acomptes…"></label>
     </div>
 
@@ -2297,7 +2459,7 @@ input[type="date"],input[type="time"]{
   <!-- Panneau édition solde -->
   <div class="edit-solde" id="edit-solde" style="display:none">
     <div class="edit-solde-title">Modifier le solde du compte</div>
-    <input type="number" id="edit-solde-input" class="edit-solde-input" inputmode="decimal" step="0.01" placeholder="0,00" onfocus="this.select()">
+    <input dir="ltr" type="number" id="edit-solde-input" class="edit-solde-input" inputmode="decimal" step="0.01" placeholder="0,00" onfocus="this.select()">
     <div class="edit-solde-hint">Saisis le montant exact actuellement sur ton compte.</div>
     <div class="edit-solde-actions">
       <button class="btn-primary" onclick="saveSoldeDirect()">Enregistrer</button>
@@ -2313,7 +2475,7 @@ input[type="date"],input[type="time"]{
       <button class="op-type-btn" id="op-type-rev" onclick="setOpType('rev')">+ Revenu</button>
     </div>
     <input type="text" id="op-name" placeholder="Description…" autocomplete="off" class="op-input op-input-full">
-    <input type="number" id="op-amount" placeholder="0,00 €" min="0" step="0.01" inputmode="decimal" class="op-input op-input-full op-input-amount-big">
+    <input dir="ltr" type="number" id="op-amount" placeholder="0,00 €" min="0" step="0.01" inputmode="decimal" class="op-input op-input-full op-input-amount-big">
     <div class="op-add-row">
       <input type="date" id="op-date" class="op-input op-input-date">
       <button class="btn-primary op-add-btn" onclick="addOp()">+ Ajouter</button>
@@ -2370,7 +2532,7 @@ input[type="date"],input[type="time"]{
     </div>
     <div class="dep-add">
       <input type="text" id="dep-new-name" placeholder="Nom de la charge…" autocomplete="off" class="dep-input">
-      <input type="number" id="dep-new-amount" placeholder="0,00" min="0" step="0.01" inputmode="decimal" class="dep-input dep-input-amount">
+      <input dir="ltr" type="number" id="dep-new-amount" placeholder="0,00" min="0" step="0.01" inputmode="decimal" class="dep-input dep-input-amount">
       <button class="btn-primary" onclick="addDep()">+</button>
     </div>
     <div class="dep-totals" id="dep-totals">Aucune charge fixe</div>
@@ -2405,7 +2567,7 @@ input[type="date"],input[type="time"]{
       </label>
       <label class="form-field">
         <span>Montant actuel (€)</span>
-        <input type="number" id="savings-amount" class="form-input" inputmode="decimal" step="0.01" placeholder="0,00">
+        <input dir="ltr" type="number" id="savings-amount" class="form-input" inputmode="decimal" step="0.01" placeholder="0,00">
       </label>
       <div class="cmd-sheet-actions">
         <button class="btn-primary" onclick="saveSavingsAccount()">💾 Enregistrer</button>
@@ -2454,7 +2616,7 @@ input[type="date"],input[type="time"]{
     <div class="simu-v2-input-block">
       <div class="simu-v2-input-lbl" id="simu-input-lbl">Ton CA mensuel</div>
       <div class="simu-v2-input-row">
-        <input type="number" id="simu-input" class="simu-v2-input" inputmode="decimal" step="500" placeholder="0" oninput="recalcSimu()">
+        <input dir="ltr" type="number" id="simu-input" class="simu-v2-input" inputmode="decimal" step="500" placeholder="0" oninput="recalcSimu()">
         <span class="simu-v2-input-unit">€</span>
       </div>
       <div class="simu-v2-quick">
@@ -2727,7 +2889,7 @@ input[type="date"],input[type="time"]{
     <div id="cmd-view-cart" style="display:none">
       <div id="cart-list"></div>
       <div class="cart-actions" id="cart-actions" style="display:none">
-        <button class="btn-primary" onclick="openCmdMessage()">✉️ Générer le message</button>
+        <button class="btn-primary" onclick="openCmdMessage()">🛒 Passer la commande</button>
         <button class="btn-ghost" onclick="clearCart()">🗑️ Vider le panier</button>
       </div>
     </div>
@@ -2877,9 +3039,9 @@ input[type="date"],input[type="time"]{
       </button>
     </div>
 
-    <label class="form-field"><span>Salaire fixe brut (€)</span><input class="form-input" type="number" id="p-fixe" inputmode="decimal" oninput="saveParams()"></label>
-    <label class="form-field"><span>Charges sociales (%)</span><input class="form-input" type="number" id="p-charges" inputmode="decimal" step="0.1" oninput="saveParams()"></label>
-    <label class="form-field"><span>Taux PAS (%)</span><input class="form-input" type="number" id="p-pas" inputmode="decimal" step="0.1" oninput="saveParams()"></label>
+    <label class="form-field"><span>Salaire fixe brut (€)</span><input dir="ltr" class="form-input" type="number" id="p-fixe" inputmode="decimal" oninput="saveParams()"></label>
+    <label class="form-field"><span>Charges sociales (%)</span><input dir="ltr" class="form-input" type="number" id="p-charges" inputmode="decimal" step="0.1" oninput="saveParams()"></label>
+    <label class="form-field"><span>Taux PAS (%)</span><input dir="ltr" class="form-input" type="number" id="p-pas" inputmode="decimal" step="0.1" oninput="saveParams()"></label>
   </div>
 
   <!-- Paliers -->
@@ -3060,7 +3222,7 @@ let simuMode='ca';
 let objEditMode='ca';
 let detailOpen=false;
 let simuDetailOpen=false;
-let evolChartCA=null,evolChartNet=null,simuChart=null;
+let evolChartCA=null,evolChartNet=null,evolChartCumul=null,evolChartMulti=null,simuChart=null;
 let obStep=1;
 let obPreset=null;
 
@@ -3418,8 +3580,9 @@ function netFromCA(ca,tp){return calcSal(ca,tp).net;}
 
 // Charges helpers
 function totalDeps(){return deps.reduce((s,d)=>s+d.amount,0);}
-function totalDepsPaid(){return deps.filter(d=>d.paid).reduce((s,d)=>s+d.amount,0);}
-function totalDepsUnpaid(){return deps.filter(d=>!d.paid).reduce((s,d)=>s+d.amount,0);}
+// Inclut les paiements partiels (paidAmount) pour les charges fractionnées
+function totalDepsPaid(){return deps.reduce((s,d)=>s+(d.installments>1?(d.paidAmount||0):(d.paid?d.amount:0)),0);}
+function totalDepsUnpaid(){return totalDeps()-totalDepsPaid();}
 
 // ════════════════════════════════════════════════════════════
 //  NAVIGATION
@@ -4109,50 +4272,172 @@ function renderEvol(){
   const d=getData();
   fillYearSelect('evol-year-select');
 
+  const filled=d.filter(x=>(x.ca||0)>0||(x.netPaye||0)>0);
   const totalCA=d.reduce((s,x)=>s+(x.ca||0),0);
   const totalNet=d.reduce((s,x)=>s+(x.netPaye||0),0);
-  const filled=d.filter(x=>x.ca>0||x.netPaye>0);
-  const moisOK=d.filter(x=>x.ca>=OBJ_CA).length;
+  const moisOK=d.filter(x=>(x.ca||0)>=OBJ_CA).length;
 
-  // ━━━━━━━━━━ MODE SPORT ÉVOLUTION ━━━━━━━━━━
+  // ━━━━━━━━━━ BILAN SPORT ━━━━━━━━━━
   renderEvolSport(d,totalCA,filled,moisOK);
 
-  document.getElementById('evol-ca-total').textContent=fmt(totalCA);
-  document.getElementById('evol-net-total').textContent=fmt(totalNet);
-  document.getElementById('evol-mois-saisis').textContent=filled.length;
-  document.getElementById('evol-mois-ok').textContent=moisOK;
-  // Moyennes de l'année sélectionnée
-  const yCAAvg=filled.length?totalCA/filled.length:0;
-  const yNetAvg=filled.length?totalNet/filled.length:0;
-  document.getElementById('evol-ca-avg').textContent=fmt(yCAAvg);
-  document.getElementById('evol-net-avg').textContent=fmt(yNetAvg);
+  // ━━━━━━━━━━ KPIs ━━━━━━━━━━
+  const caAvg=filled.length?totalCA/filled.length:0;
+  const caValues=d.map(x=>x.ca||0).filter(v=>v>0);
+  const bestMonth=caValues.length?Math.max(...caValues):0;
+  const worstMonth=caValues.length?Math.min(...caValues):0;
+  document.getElementById('kpi-ca-total').textContent=filled.length?fmt(totalCA):'—';
+  document.getElementById('kpi-net-total').textContent=filled.length?fmt(totalNet):'—';
+  document.getElementById('kpi-ca-avg').textContent=filled.length?fmt(caAvg):'—';
+  document.getElementById('kpi-mois-ok').textContent=`${moisOK}/12`;
+  document.getElementById('kpi-best-month').textContent=bestMonth?fmt(bestMonth):'—';
+  document.getElementById('kpi-worst-month').textContent=worstMonth?fmt(worstMonth):'—';
 
-  // Stats globales toutes années
-  let allCA=0,allNet=0,allMonths=0;
-  const yearsList=Object.keys(years).map(Number).sort();
-  yearsList.forEach(y=>{
-    const yd=years[y];
-    yd.forEach(m=>{
-      if((m.ca||0)>0||(m.netPaye||0)>0){
-        allCA+=m.ca||0;
-        allNet+=m.netPaye||0;
-        allMonths++;
-      }
-    });
-  });
-  const allCAAvg=allMonths?allCA/allMonths:0;
-  const allNetAvg=allMonths?allNet/allMonths:0;
-  document.getElementById('all-ca-avg').textContent=fmt(allCAAvg);
-  document.getElementById('all-net-avg').textContent=fmt(allNetAvg);
-  document.getElementById('all-months').textContent=allMonths;
-  if(allMonths>0){
-    const yLabels=yearsList.filter(y=>years[y].some(m=>m.ca>0||m.netPaye>0));
-    document.getElementById('all-years-foot').textContent=`Sur ${yLabels.length} année${yLabels.length>1?'s':''} (${yLabels.join(', ')}) · CA cumulé : ${fmt(allCA)} · Net cumulé : ${fmt(allNet)}`;
-  } else {
-    document.getElementById('all-years-foot').textContent='Aucun mois saisi';
+  const bestIdx=d.findIndex(x=>x.ca===bestMonth);
+  const worstIdx=d.findIndex(x=>x.ca===worstMonth);
+  if(bestIdx>=0&&bestMonth>0){
+    const el=document.getElementById('kpi-best-month');
+    el.title=MONTHS[bestIdx];
+    el.nextElementSibling&&(el.nextElementSibling.textContent=`Meilleur mois (${MS[bestIdx]})`);
   }
 
-  // Heatmap
+  // ━━━━━━━━━━ CHART CA vs OBJECTIF ━━━━━━━━━━
+  if(evolChartCA)evolChartCA.destroy();
+  const caColors=d.map(x=>{
+    const ca=x.ca||0;
+    if(!ca)return 'rgba(255,255,255,.06)';
+    if(ca>=OBJ_CA)return 'rgba(34,197,94,.85)';
+    if(ca>=OBJ_CA*.8)return 'rgba(245,200,66,.85)';
+    return 'rgba(239,68,68,.7)';
+  });
+  evolChartCA=new Chart(document.getElementById('evol-chart-ca'),{
+    type:'bar',
+    data:{labels:MS,datasets:[
+      {label:'CA',data:d.map(x=>x.ca||null),backgroundColor:caColors,borderRadius:5,borderSkipped:false},
+      {label:'Objectif',data:Array(12).fill(OBJ_CA),type:'line',borderColor:'rgba(245,200,66,.6)',borderWidth:1.5,borderDash:[4,4],pointRadius:0,fill:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#7A8294',font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A8294',font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}
+      }
+    }
+  });
+  const aboveObj=d.filter(x=>x.ca>=OBJ_CA).length;
+  const el=document.getElementById('chart-ca-sub');
+  if(el)el.textContent=filled.length?`${aboveObj} mois au-dessus · ${filled.length-aboveObj} en dessous · objectif ${fmt(OBJ_CA)}`:'Aucune donnée';
+
+  // ━━━━━━━━━━ CHART NET MENSUEL ━━━━━━━━━━
+  if(evolChartNet)evolChartNet.destroy();
+  const netData=d.map(x=>x.netPaye||null);
+  const netAvgLine=Array(12).fill(caAvg>0?totalNet/filled.length:null);
+  evolChartNet=new Chart(document.getElementById('evol-chart-net'),{
+    type:'line',
+    data:{labels:MS,datasets:[
+      {label:'Net',data:netData,borderColor:'#22C55E',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#22C55E',fill:true,backgroundColor:'rgba(34,197,94,.08)',tension:.3},
+      {label:'Moyenne',data:netAvgLine,borderColor:'rgba(59,130,246,.5)',borderWidth:1.5,borderDash:[4,4],pointRadius:0,fill:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#7A8294',font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A8294',font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}
+      }
+    }
+  });
+  const netEl=document.getElementById('chart-net-sub');
+  if(netEl)netEl.textContent=filled.length?`Moyenne ${fmt(totalNet/filled.length)}/mois`:'Aucune donnée';
+
+  // ━━━━━━━━━━ CHART CA CUMULÉ ━━━━━━━━━━
+  if(evolChartCumul)evolChartCumul.destroy();
+  let cumul=0;
+  const cumulData=d.map(x=>{cumul+=(x.ca||0);return cumul||null;});
+  const objCumulData=MS.map((_,i)=>OBJ_CA*(i+1));
+  evolChartCumul=new Chart(document.getElementById('evol-chart-cumul'),{
+    type:'line',
+    data:{labels:MS,datasets:[
+      {label:'CA cumulé',data:cumulData,borderColor:'#F5C842',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#F5C842',fill:true,backgroundColor:'rgba(245,200,66,.06)',tension:.3},
+      {label:'Objectif cumulé',data:objCumulData,borderColor:'rgba(245,200,66,.3)',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#7A8294',font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A8294',font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}
+      }
+    }
+  });
+  const objAnnuel=OBJ_CA*12;
+  const pctCumul=objAnnuel>0?Math.round(totalCA/objAnnuel*100):0;
+  const cumulEl=document.getElementById('chart-cumul-sub');
+  if(cumulEl)cumulEl.textContent=filled.length?`${fmt(totalCA)} / ${fmt(objAnnuel)} objectif annuel (${pctCumul}%)`:'vs objectif annuel';
+
+  // ━━━━━━━━━━ CHART MULTI-ANNÉES ━━━━━━━━━━
+  const yearsList=Object.keys(years).map(Number).sort().filter(y=>years[y].some(m=>m.ca>0));
+  const multiCard=document.getElementById('chart-multiyear-card');
+  if(yearsList.length>=2&&multiCard){
+    multiCard.style.display='flex';
+    if(evolChartMulti)evolChartMulti.destroy();
+    const colors=['#F5C842','#22C55E','#3B82F6','#A855F7','#F97316','#EF4444'];
+    const datasets=yearsList.map((y,i)=>({
+      label:String(y),
+      data:years[y].map(m=>m.ca||null),
+      borderColor:colors[i%colors.length],
+      borderWidth:2,
+      pointRadius:2,
+      fill:false,
+      tension:.3
+    }));
+    evolChartMulti=new Chart(document.getElementById('evol-chart-multiyear'),{
+      type:'line',
+      data:{labels:MS,datasets},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:true,labels:{color:'#7A8294',font:{size:10},boxWidth:12,padding:8}}
+        },
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#7A8294',font:{size:9}}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A8294',font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}
+        }
+      }
+    });
+  } else if(multiCard){
+    multiCard.style.display='none';
+  }
+
+  // ━━━━━━━━━━ DISTRIBUTION ━━━━━━━━━━
+  const distribEl=document.getElementById('db-distrib');
+  if(distribEl&&filled.length>0){
+    const tranches=[
+      {lbl:'≥ 120% obj',min:OBJ_CA*1.2,max:Infinity,color:'#A855F7'},
+      {lbl:'100-120% obj',min:OBJ_CA,max:OBJ_CA*1.2,color:'#22C55E'},
+      {lbl:'80-100% obj',min:OBJ_CA*.8,max:OBJ_CA,color:'#F5C842'},
+      {lbl:'50-80% obj',min:OBJ_CA*.5,max:OBJ_CA*.8,color:'#F97316'},
+      {lbl:'< 50% obj',min:0,max:OBJ_CA*.5,color:'#EF4444'},
+    ];
+    distribEl.innerHTML=tranches.map(t=>{
+      const count=d.filter(x=>(x.ca||0)>=t.min&&(x.ca||0)<t.max).length;
+      const pct=filled.length?Math.round(count/filled.length*100):0;
+      return `<div class="db-distrib-row">
+        <div class="db-distrib-lbl">${t.lbl}</div>
+        <div class="db-distrib-bar-wrap">
+          <div class="db-distrib-bar" style="width:${pct}%;background:${t.color}"></div>
+        </div>
+        <div class="db-distrib-count">${count}</div>
+      </div>`;
+    }).join('');
+  } else if(distribEl){
+    distribEl.innerHTML='<div style="text-align:center;color:var(--muted);font-size:12px;padding:12px">Saisis des mois pour voir la distribution</div>';
+  }
+
+  // ━━━━━━━━━━ HEATMAP ━━━━━━━━━━
   const hm=document.getElementById('evol-heatmap');
   hm.innerHTML=d.map((x,i)=>{
     const ca=x.ca||0;
@@ -4170,45 +4455,57 @@ function renderEvol(){
     </div>`;
   }).join('');
 
-  // Tableau
+  // ━━━━━━━━━━ STATS GLOBALES ━━━━━━━━━━
+  let allCA=0,allNet=0,allMonths=0;
+  yearsList.forEach(y=>{
+    years[y].forEach(m=>{
+      if((m.ca||0)>0||(m.netPaye||0)>0){allCA+=m.ca||0;allNet+=m.netPaye||0;allMonths++;}
+    });
+  });
+  document.getElementById('all-ca-avg').textContent=allMonths?fmt(allCA/allMonths):'—';
+  document.getElementById('all-net-avg').textContent=allMonths?fmt(allNet/allMonths):'—';
+  document.getElementById('all-months').textContent=allMonths;
+  const yWithData=yearsList.filter(y=>years[y].some(m=>m.ca>0||m.netPaye>0));
+  document.getElementById('all-years-foot').textContent=
+    allMonths?`${yWithData.length} année${yWithData.length>1?'s':''} (${yWithData.join(', ')}) · CA cumulé : ${fmt(allCA)}`:'Aucun mois saisi';
+
+  // ━━━━━━━━━━ TABLEAU DÉTAILLÉ ━━━━━━━━━━
   const tbody=document.getElementById('evol-tbody');
-  const charges=totalDeps();
+  let prevCA=null;
   tbody.innerHTML=d.map((x,i)=>{
-    if(!x.ca&&!x.netPaye)return `<tr><td style="color:var(--muted)">${MS[i]}</td><td colspan="4" style="color:var(--muted)">—</td></tr>`;
-    const diff=(x.ca||0)-OBJ_CA;
-    const solde=(x.netPaye||0)-charges;
-    return `<tr>
-      <td style="font-weight:700">${MS[i]}</td>
-      <td style="color:var(--accent)">${fmt(x.ca)}</td>
-      <td style="color:var(--green)">${fmt(x.netPaye)}</td>
-      <td><span class="${diff>=0?'tag-g':'tag-r'}">${diff>=0?'+':''}${fmt(diff).replace(' €','')}</span></td>
-      <td style="color:${solde>=0?'var(--green)':'var(--red)'}">${solde>=0?'+':''}${fmt(solde)}</td>
+    if(!(x.ca||0)&&!(x.netPaye||0)){
+      prevCA=null;
+      return `<tr><td style="color:var(--muted)">${MS[i]}</td><td colspan="4" style="color:var(--muted);font-size:11px">—</td></tr>`;
+    }
+    const ca=x.ca||0;
+    const net=x.netPaye||0;
+    const diffObj=ca-OBJ_CA;
+    const pctObj=OBJ_CA>0?Math.round(ca/OBJ_CA*100):0;
+    let trend='—';
+    if(prevCA!==null&&ca>0){
+      const delta=ca-prevCA;
+      const deltaPct=prevCA>0?Math.round(delta/prevCA*100):0;
+      trend=delta>0?`<span style="color:var(--green)">↑${deltaPct}%</span>`:`<span style="color:var(--red)">↓${Math.abs(deltaPct)}%</span>`;
+    }
+    prevCA=ca>0?ca:prevCA;
+    const rowCls=ca>=OBJ_CA?'row-ok':ca>=OBJ_CA*.8?'row-mid':'row-low';
+    return `<tr class="${rowCls}">
+      <td style="font-weight:700;font-size:12px">${MS[i]}</td>
+      <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px">${fmt(ca)}</td>
+      <td style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px">${net?fmt(net):'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px"><span style="color:${diffObj>=0?'var(--green)':'var(--red)'}">${diffObj>=0?'+':''}${Math.round(diffObj/1000*10)/10}k</span></td>
+      <td>${trend}</td>
     </tr>`;
   }).join('');
-  tbody.innerHTML+=`<tr class="total-row"><td>Total</td><td>${fmt(totalCA)}</td><td>${fmt(totalNet)}</td><td>${moisOK}/12</td><td>${fmt(totalNet-charges*filled.length)}</td></tr>`;
-
-  // Graphique CA
-  if(evolChartCA)evolChartCA.destroy();
-  evolChartCA=new Chart(document.getElementById('evol-chart-ca'),{
-    type:'bar',
-    data:{labels:MS,datasets:[
-      {data:d.map(x=>x.ca||null),backgroundColor:d.map(x=>(x.ca||0)>=OBJ_CA?'rgba(34,197,94,.85)':'rgba(245,200,66,.7)'),borderRadius:4},
-      {data:Array(12).fill(OBJ_CA),type:'line',borderColor:'rgba(245,200,66,.9)',borderWidth:2,borderDash:[3,3],pointRadius:0,fill:false}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#7A8294',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A8294',font:{size:10},callback:v=>(v/1000)+'k'}}}}
-  });
-
-  // Graphique Net cumul
-  if(evolChartNet)evolChartNet.destroy();
-  let cumul=0;
-  const cumulData=d.map(x=>{cumul+=(x.netPaye||0);return cumul;});
-  evolChartNet=new Chart(document.getElementById('evol-chart-net'),{
-    type:'line',
-    data:{labels:MS,datasets:[
-      {data:cumulData,borderColor:'#22C55E',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#22C55E',fill:true,backgroundColor:'rgba(34,197,94,.1)',tension:.3}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#7A8294',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7A8294',font:{size:10},callback:v=>(v/1000)+'k€'}}}}
-  });
+  if(filled.length>0){
+    tbody.innerHTML+=`<tr style="border-top:2px solid var(--border)">
+      <td style="font-weight:800;font-size:11px">Total</td>
+      <td style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700">${fmt(totalCA)}</td>
+      <td style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700">${fmt(totalNet)}</td>
+      <td style="font-size:11px;color:var(--muted)">${moisOK}/12 obj</td>
+      <td></td>
+    </tr>`;
+  }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -4300,14 +4597,18 @@ function renderWeekView(){
   const sunday=days[6];
   const weekNum=getISOWeekNum(monday);
   const isCurrent=weekOffset===0;
+  const isPast=weekOffset<0;
 
-  // Titre semaine
+  // Titre semaine — numéro + dates complètes
+  const yearLabel=monday.getFullYear()!==new Date().getFullYear()?` ${monday.getFullYear()}`:'';
+  const dateRange=`${fmtDateShort(monday)} → ${fmtDateShort(sunday)}`;
   document.getElementById('week-title').textContent=
-    isCurrent?'Cette semaine':
-    weekOffset===-1?'Semaine dernière':
-    weekOffset===1?'Semaine prochaine':
-    `Semaine ${weekNum}`;
-  document.getElementById('week-range').textContent=`Du ${fmtDateShort(monday)} au ${fmtDateShort(sunday)} · S${weekNum}`;
+    isCurrent?'📅 Cette semaine':
+    weekOffset===-1?'📅 Semaine dernière':
+    weekOffset===1?'📅 Semaine prochaine':
+    `📅 Semaine ${weekNum}${yearLabel}`;
+  document.getElementById('week-range').textContent=
+    `S${weekNum} · ${dateRange}${isCurrent?' · en cours':isPast?' · passée':' · à venir'}`;
 
   // Total semaine
   let total=0,filled=0;
@@ -4364,6 +4665,21 @@ function renderWeekView(){
   const dayNames=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
   const list=document.getElementById('days-list');
   const todayISO=isoDate(new Date());
+
+  // Bannière contextuelle — rappel clair de la semaine en cours de saisie
+  const cardTitle=document.querySelector('#view-week .card-title');
+  if(cardTitle){
+    const dateRange=`${fmtDateShort(monday)} → ${fmtDateShort(sunday)}`;
+    if(isCurrent){
+      cardTitle.innerHTML=`📅 Saisie quotidienne <span class="week-active-tag current">S${weekNum} · ${dateRange}</span>`;
+    } else if(weekOffset<0){
+      const yearLabel=monday.getFullYear()!==new Date().getFullYear()?` ${monday.getFullYear()}`:'';
+      cardTitle.innerHTML=`📅 Saisie quotidienne <span class="week-active-tag past">S${weekNum}${yearLabel} · ${dateRange}</span>`;
+    } else {
+      cardTitle.innerHTML=`📅 Saisie quotidienne <span class="week-active-tag future">S${weekNum} · ${dateRange}</span>`;
+    }
+  }
+
   list.innerHTML=days.map((d,i)=>{
     const iso=isoDate(d);
     const v=dailyData[iso]||'';
@@ -4380,7 +4696,7 @@ function renderWeekView(){
         <div class="day-date">${fmtDateShort(d)}${isToday?' · auj.':''}</div>
       </div>
       <div class="day-input-wrap">
-        <input type="number" class="day-input ${hasValue?'has-value':''}" inputmode="decimal" step="100" placeholder="0" value="${v}" data-iso="${iso}" oninput="updateDay(this)">
+        <input type="text" class="day-input ${hasValue?'has-value':''}" inputmode="decimal" pattern="[0-9]*" placeholder="0" value="${v||''}" data-iso="${iso}" oninput="updateDay(this)" autocomplete="off" autocorrect="off" spellcheck="false">
         <span class="day-unit">€</span>
       </div>
     </div>`;
@@ -4408,64 +4724,147 @@ function updateDay(inp){
     inp.classList.remove('has-value');
   }
   sv('mp5_daily',dailyData);
-  // Re-render complet pour mettre à jour zone sport, gauge, encouragement, etc.
-  // On garde le focus sur l'input
-  const focused=document.activeElement;
-  const focusedISO=focused && focused.dataset?focused.dataset.iso:null;
-  renderWeekView();
-  // Restaurer focus
-  if(focusedISO){
-    const newInp=document.querySelector(`.day-input[data-iso="${focusedISO}"]`);
-    if(newInp){newInp.focus();const len=newInp.value.length;newInp.setSelectionRange(len,len);}
+  // Mettre à jour la sport-card sans recréer les inputs
+  updateWeekSportCard();
+  // Mettre à jour l'accueil si actif
+  renderHomeIfActive();
+}
+
+// Met à jour la sport-card + la liste des semaines sans toucher aux inputs
+function updateWeekSportCard(){
+  const monday=getWeekStart(weekOffset);
+  const days=getWeekDays(monday);
+  let total=0,filled=0;
+  days.forEach(d=>{
+    const v=dailyData[isoDate(d)];
+    if(v&&v>0){total+=v;filled++;}
+  });
+
+  // Stats en haut
+  const weekTotalEl=document.getElementById('week-total');
+  if(weekTotalEl)weekTotalEl.textContent=fmt(total);
+  const weekDaysEl=document.getElementById('week-days-filled');
+  if(weekDaysEl)weekDaysEl.textContent=filled;
+  const weekAvgEl=document.getElementById('week-avg');
+  if(weekAvgEl)weekAvgEl.textContent=filled?fmt(total/filled):'0 €';
+
+  // Zone sport
+  const weekTarget=Math.round(OBJ_CA/4.33);
+  const pct=weekTarget>0?Math.round(total/weekTarget*100):0;
+  const sportCard=document.getElementById('week-sport-card');
+  if(sportCard){
+    sportCard.classList.remove('zone-low','zone-warm','zone-good','zone-great','zone-elite');
+    let zoneTag,encourage,zoneClass;
+    if(filled===0){zoneClass='zone-low';zoneTag='🌅 NOUVELLE SEMAINE';encourage='Bonne semaine à toi !';}
+    else if(pct<25){zoneClass='zone-low';zoneTag='🌱 DÉBUT DE SEMAINE';encourage='Chaque jour compte, continue';}
+    else if(pct<50){zoneClass='zone-warm';zoneTag='🌤️ EN ROUTE';encourage='Tu avances bien';}
+    else if(pct<80){zoneClass='zone-good';zoneTag='💪 BELLE FORME';encourage='Tu tiens un bon rythme';}
+    else if(pct<100){zoneClass='zone-great';zoneTag='✨ PRESQUE LÀ';encourage='Tu y es presque, super semaine !';}
+    else if(pct<150){zoneClass='zone-great';zoneTag='✅ OBJECTIF';encourage='Bravo, belle semaine !';}
+    else{zoneClass='zone-elite';zoneTag='🌟 SUPER SEMAINE';encourage='Magnifique, profite-en !';}
+    sportCard.classList.add(zoneClass);
+    const zoneTagEl=document.getElementById('week-sport-zone');
+    if(zoneTagEl)zoneTagEl.textContent=zoneTag;
+    const encourageEl=document.getElementById('week-sport-encourage');
+    if(encourageEl)encourageEl.textContent=encourage;
+    const fillEl=document.getElementById('week-sport-fill');
+    if(fillEl)fillEl.style.width=Math.min(pct,100)+'%';
+    const targetEl=document.getElementById('week-sport-target');
+    if(targetEl)targetEl.textContent=`Objectif : ${fmt(weekTarget)} · ${pct}% atteint`;
   }
+
+  // vs semaine précédente
+  const prevMonday=new Date(monday);
+  prevMonday.setDate(prevMonday.getDate()-7);
+  const prevDays=getWeekDays(prevMonday);
+  let prevTot=0;
+  prevDays.forEach(d=>{const v=dailyData[isoDate(d)];if(v)prevTot+=v;});
+  const vsEl=document.getElementById('week-vs-prev');
+  if(vsEl){
+    if(prevTot>0&&total>0){
+      const pctDelta=Math.round((total-prevTot)/prevTot*100);
+      vsEl.textContent=(pctDelta>=0?'+':'')+pctDelta+'%';
+      vsEl.style.color=pctDelta>=0?'var(--green)':'var(--red)';
+    } else {
+      vsEl.textContent='—';vsEl.style.color='var(--muted)';
+    }
+  }
+
+  // Rafraîchir la liste des semaines (montants mis à jour)
+  const showYear=monday.getFullYear();
+  renderWeeksList(showYear);
 }
 
 function renderWeeksList(year){
   const list=document.getElementById('weeks-list');
-  // Trouver toutes les semaines qui ont au moins un jour avec des données pour cette année
+  if(!list)return;
+
+  // Collecter TOUTES les semaines connues (toutes années)
   const weeks={};
+
+  // 1. Semaines avec données existantes (toutes années)
   Object.keys(dailyData).forEach(iso=>{
     const d=new Date(iso);
-    if(d.getFullYear()!==year)return;
     const monday=getMonday(d);
     const wKey=isoDate(monday);
-    if(!weeks[wKey])weeks[wKey]={monday,total:0,days:0};
+    if(!weeks[wKey])weeks[wKey]={monday,total:0,days:0,hasData:true};
     weeks[wKey].total+=dailyData[iso];
     weeks[wKey].days++;
+    weeks[wKey].hasData=true;
   });
-  // Ajouter aussi les 12 dernières semaines de l'année (vides ou pas)
-  const today=new Date();
-  for(let off=-12;off<=4;off++){
+
+  // 2. Toutes les semaines des 52 dernières semaines + 4 à venir (pour pouvoir les saisir)
+  for(let off=-52;off<=4;off++){
     const m=getWeekStart(off);
-    if(m.getFullYear()!==year)continue;
     const wKey=isoDate(m);
-    if(!weeks[wKey])weeks[wKey]={monday:m,total:0,days:0};
+    if(!weeks[wKey])weeks[wKey]={monday:m,total:0,days:0,hasData:false};
   }
+
   const arr=Object.values(weeks).sort((a,b)=>b.monday-a.monday);
-  if(arr.length===0){list.innerHTML='<div style="text-align:center;color:var(--muted);padding:14px;font-size:12px">Aucune donnée cette année</div>';return;}
+  if(arr.length===0){
+    list.innerHTML='<div style="text-align:center;color:var(--muted);padding:14px;font-size:12px">Aucune semaine disponible</div>';
+    return;
+  }
+
   const currentMondayISO=isoDate(getCurrentMonday());
+
+  // Grouper par année pour afficher des séparateurs
+  let currentYear=null;
   list.innerHTML=arr.map(w=>{
+    const wYear=w.monday.getFullYear();
     const sun=new Date(w.monday);sun.setDate(sun.getDate()+6);
     const wn=getISOWeekNum(w.monday);
     const isCurrent=isoDate(w.monday)===currentMondayISO;
-    return `<div class="week-item${isCurrent?' current':''}" onclick="goToWeek('${isoDate(w.monday)}')">
+    const pct=OBJ_CA>0?Math.min(Math.round(w.total/(OBJ_CA/4.33)*100),100):0;
+
+    let yearHeader='';
+    if(wYear!==currentYear){
+      currentYear=wYear;
+      yearHeader=`<div class="weeks-year-sep">${wYear}</div>`;
+    }
+
+    return yearHeader+`<div class="week-item${isCurrent?' current':''}${w.hasData?' has-data':''}" onclick="goToWeek('${isoDate(w.monday)}')">
       <div class="week-item-info">
-        <div class="week-item-name">Sem. ${wn}${isCurrent?' · en cours':''}</div>
-        <div class="week-item-range">${fmtDateShort(w.monday)} → ${fmtDateShort(sun)}</div>
+        <div class="week-item-name">S${wn} · ${fmtDateShort(w.monday)} → ${fmtDateShort(sun)}${isCurrent?' · en cours':''}</div>
       </div>
-      <div class="week-item-amount${w.total===0?' empty':''}">${w.total>0?fmt(w.total):'—'}</div>
+      <div class="week-item-right">
+        ${w.total>0?`<div class="week-item-bar"><div class="week-item-bar-fill" style="width:${pct}%"></div></div>`:''}
+        <div class="week-item-amount${w.total===0?' empty':''}">${w.total>0?fmt(w.total):'Saisir'}</div>
+      </div>
     </div>`;
   }).join('');
 }
 
 function goToWeek(mondayISO){
-  const target=new Date(mondayISO);
+  const target=new Date(mondayISO+'T12:00:00');
   const current=getCurrentMonday();
   const diffMs=target-current;
   const diffWeeks=Math.round(diffMs/(7*86400000));
   weekOffset=diffWeeks;
   renderWeekView();
-  window.scrollTo({top:0,behavior:'smooth'});
+  // Scroller en haut de la page saisie
+  const page=document.getElementById('page-saisie');
+  if(page)page.scrollTop=0;
 }
 
 // ════════════════════════════════════════════════════════════
@@ -4908,8 +5307,7 @@ function renderDeps(){
   const list=document.getElementById('dep-list');
   if(deps.length===0){list.innerHTML='';return;}
   list.innerHTML='';
-  // Bouton "Tout décocher" si au moins une charge est payée
-  if(deps.some(d=>d.paid)){
+  if(deps.some(d=>d.paid||(d.paidAmount&&d.paidAmount>0))){
     const reset=document.createElement('button');
     reset.className='dep-reset-btn';
     reset.textContent='↻ Tout décocher (nouveau mois)';
@@ -4919,33 +5317,68 @@ function renderDeps(){
   deps.forEach(exp=>{
     const div=document.createElement('div');
     if(depEditId===exp.id){
-      div.className='dep-edit';
+      // Mode édition : nom + montant + déduction partielle
+      const paidAmount=exp.paidAmount||0;
+      div.className='dep-edit dep-edit-extended';
       div.innerHTML=`
-        <input type="text" value="${exp.name.replace(/"/g,'&quot;')}" id="ed-name-${exp.id}" onkeydown="if(event.key==='Enter')saveDep(${exp.id})">
-        <input type="number" value="${exp.amount}" step="0.01" inputmode="decimal" id="ed-amt-${exp.id}" onkeydown="if(event.key==='Enter')saveDep(${exp.id})">
-        <button onclick="saveDep(${exp.id})" style="background:var(--accent);color:#000">✓</button>
-        <button onclick="cancelDepEdit()" style="background:var(--surface3);color:var(--muted)">✕</button>`;
+        <input type="text" value="${exp.name.replace(/"/g,'&quot;')}" id="ed-name-${exp.id}" placeholder="Nom de la charge">
+        <input dir="ltr" type="number" value="${exp.amount}" step="0.01" inputmode="decimal" id="ed-amt-${exp.id}" placeholder="Montant total (€)">
+        <div class="dep-partial-section">
+          <div class="dep-partial-lbl">💳 Déjà payé en partie ?</div>
+          <div class="dep-partial-row">
+            <input dir="ltr" type="number" value="${paidAmount||''}" step="0.01" inputmode="decimal" id="ed-paid-${exp.id}" placeholder="0,00 €" class="dep-partial-input">
+            <span class="dep-partial-hint">€ déjà payés</span>
+          </div>
+          ${paidAmount>0?`<div class="dep-partial-preview">Reste : ${fmtC(Math.max(exp.amount-paidAmount,0))}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <button onclick="saveDep(${exp.id})" style="flex:1;background:var(--accent);color:#000;min-height:44px;border-radius:8px;font-weight:700">✓ OK</button>
+          <button onclick="cancelDepEdit()" style="flex:1;background:var(--surface3);color:var(--muted);min-height:44px;border-radius:8px;font-weight:700">✕</button>
+        </div>`;
     } else {
-      const isPaid=!!exp.paid;
-      div.className='dep-item '+(isPaid?'paid':'unpaid');
+      const paidAmount=exp.paidAmount||0;
+      const isPaidFull=!!exp.paid;
+      const hasPartial=paidAmount>0&&paidAmount<exp.amount;
+      const remaining=Math.max(exp.amount-paidAmount,0);
+      const paidPct=exp.amount>0?Math.round(paidAmount/exp.amount*100):0;
+
+      let statusHtml, amountHtml, extraHtml='';
+      if(isPaidFull){
+        statusHtml=`<div class="dep-item-status">✅ Payé</div>`;
+        amountHtml=`<div class="dep-item-amount paid">−${fmtC(exp.amount)}</div>`;
+      } else if(hasPartial){
+        statusHtml=`<div class="dep-item-status" style="color:var(--blue)">💳 ${fmtC(paidAmount)} payé · ${fmtC(remaining)} restant</div>`;
+        amountHtml=`<div class="dep-item-amount unpaid">−${fmtC(exp.amount)}</div>`;
+        extraHtml=`
+          <div class="dep-split-bar">
+            <div class="dep-split-fill" style="width:${paidPct}%"></div>
+          </div>`;
+      } else {
+        statusHtml=`<div class="dep-item-status">⏳ À payer</div>`;
+        amountHtml=`<div class="dep-item-amount unpaid">−${fmtC(exp.amount)}</div>`;
+      }
+
+      div.className=`dep-item ${isPaidFull?'paid':'unpaid'}`;
       div.onclick=(e)=>{if(e.target.tagName!=='BUTTON')toggleDepPaid(exp.id);};
       div.innerHTML=`
         <div class="dep-item-info">
-          <div class="dep-item-name ${isPaid?'paid':''}">${escapeHtml(exp.name)}</div>
-          <div class="dep-item-status">${isPaid?'✅ Payé':'⏳ À payer'}</div>
+          <div class="dep-item-name">${escapeHtml(exp.name)}</div>
+          ${statusHtml}
+          ${extraHtml}
         </div>
-        <div class="dep-item-amount ${isPaid?'paid':'unpaid'}">−${fmtC(exp.amount)}</div>
+        ${amountHtml}
         <button class="dep-item-btn" onclick="event.stopPropagation();editDep(${exp.id})">✎</button>
         <button class="dep-item-btn del" onclick="event.stopPropagation();deleteDep(${exp.id})">✕</button>`;
     }
     list.appendChild(div);
   });
 }
+
 function addDep(){
   const name=document.getElementById('dep-new-name').value.trim();
   const amount=parseFloatFR(document.getElementById('dep-new-amount').value);
   if(!name||amount<=0)return;
-  deps.push({id:depNextId++,name,amount,paid:false});
+  deps.push({id:depNextId++,name,amount,paid:false,paidAmount:0});
   sv('mp5_deps',deps);sv('mp5_depid',depNextId);
   document.getElementById('dep-new-name').value='';
   document.getElementById('dep-new-amount').value='';
@@ -4957,12 +5390,17 @@ function saveDep(id){
   const exp=deps.find(d=>d.id===id);if(!exp)return;
   const nm=document.getElementById('ed-name-'+id).value.trim();
   const am=parseFloatFR(document.getElementById('ed-amt-'+id).value);
+  const paidAmt=parseFloatFR(document.getElementById('ed-paid-'+id).value)||0;
   if(nm)exp.name=nm;
   if(am>0)exp.amount=am;
-  // Si la charge est cochée, mettre à jour l'opération liée
-  if(exp.paid && compte.ops){
-    const op=compte.ops.find(o=>o.linkedDepId===id);
-    if(op){op.name=exp.name+' (charge fixe)';op.amount=exp.amount;sv('mp5_compte',compte);}
+  // Montant déjà payé (déduction partielle)
+  exp.paidAmount=Math.min(paidAmt,exp.amount);
+  // Si tout est payé → cocher automatiquement
+  if(exp.paidAmount>=exp.amount-0.01){
+    exp.paidAmount=exp.amount;
+    exp.paid=true;
+  } else {
+    exp.paid=false;
   }
   depEditId=null;
   sv('mp5_deps',deps);
@@ -4975,28 +5413,26 @@ function deleteDep(id){
   sv('mp5_deps',deps);sv('mp5_compte',compte);
   renderDeps();renderCompte();renderHomeIfActive();
 }
-// Toggle : marquer comme payé/non payé + créer/retirer l'opération bancaire liée
 function toggleDepPaid(id){
   const exp=deps.find(d=>d.id===id);if(!exp)return;
   exp.paid=!exp.paid;
   if(!compte.ops)compte.ops=[];
   const today=new Date().toISOString().slice(0,10);
   if(exp.paid){
-    // Créer opération liée qui débite le solde
+    exp.paidAmount=exp.amount;
     compte.ops.push({id:opNextId++,name:exp.name+' (charge fixe)',amount:exp.amount,date:today,type:'dep',cat:'charge_fixe',linkedDepId:exp.id});
     sv('mp5_opid',opNextId);
   } else {
-    // Retirer l'opération liée
+    exp.paidAmount=0;
     compte.ops=compte.ops.filter(o=>o.linkedDepId!==exp.id);
   }
   sv('mp5_deps',deps);sv('mp5_compte',compte);
   renderDeps();renderCompte();renderHomeIfActive();
 }
-// Décocher toutes les charges (nouveau mois)
 function resetAllDepPaid(){
-  if(!confirm('Décocher toutes les charges (nouveau mois) ?\nLes opérations bancaires liées seront supprimées.'))return;
+  if(!confirm('Remettre toutes les charges à zéro (nouveau mois) ?\nLes opérations bancaires liées seront supprimées.'))return;
   if(compte.ops)compte.ops=compte.ops.filter(o=>!o.linkedDepId);
-  deps.forEach(d=>{d.paid=false;});
+  deps.forEach(d=>{d.paid=false;d.paidAmount=0;});
   sv('mp5_deps',deps);sv('mp5_compte',compte);
   renderDeps();renderCompte();renderHomeIfActive();
 }
@@ -6347,12 +6783,12 @@ function renderPaliers(){
       </div>
       <div class="palier-row">
         <span class="palier-lbl">Démarre à</span>
-        <input class="palier-inp" type="number" value="${p.seuil}" step="100" inputmode="decimal" oninput="updatePalier(${i},'seuil',this.value)">
+        <input dir="ltr" class="palier-inp" type="number" value="${p.seuil}" step="100" inputmode="decimal" oninput="updatePalier(${i},'seuil',this.value)">
         <span class="palier-unit">€</span>
       </div>
       <div class="palier-row">
         <span class="palier-lbl">Taux de commission</span>
-        <input class="palier-inp" type="number" value="${p.taux}" step="0.1" inputmode="decimal" oninput="updatePalier(${i},'taux',this.value)">
+        <input dir="ltr" class="palier-inp" type="number" value="${p.taux}" step="0.1" inputmode="decimal" oninput="updatePalier(${i},'taux',this.value)">
         <span class="palier-unit">%</span>
       </div>
     </div>`).join('');
