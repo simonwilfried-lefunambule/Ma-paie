@@ -2332,13 +2332,13 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
 <div class="page active" id="page-home">
 <div class="page-pad">
 
-  <!-- Header -->
-  <div class="hp-header">
+  <!-- Header : greeting + années -->
+  <div class="hp2-header">
     <div>
-      <div class="hp-greeting" id="home-greeting">Bonjour 👋</div>
-      <div class="hp-sub" id="home-context">Pilote ton activité</div>
+      <div class="hp2-greeting" id="home-greeting">Bonjour 👋</div>
+      <div class="hp2-sub" id="home-context">Pilote ton activité</div>
     </div>
-    <button class="hp-settings-btn" onclick="goPage('params')" aria-label="Paramètres">⚙️</button>
+    <div class="hp2-year-pills" id="hp2-year-pills"></div>
   </div>
 
   <!-- Guide premier démarrage -->
@@ -2351,63 +2351,53 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     </div>
   </div>
 
-  <!-- ═══════ CARTE 1 — CA DU MOIS ═══════ -->
-  <div class="hp-card hp-hero">
-    <div class="hp-card-title">📊 CA DU MOIS · <span id="perf-current-sub">—</span></div>
+  <!-- Objectif mensuel pill -->
+  <div class="hp2-top-row">
+    <div class="hp2-top-lbl">Objectif mensuel</div>
+    <div class="hp2-top-pill" onclick="togglePerfEdit()">
+      🏷 <span id="perf-target">— €</span>
+    </div>
+  </div>
 
-    <!-- Objectif EN VEDETTE -->
-    <div class="hp-obj-hero">
-      <div class="hp-obj-hero-lbl">Objectif du mois</div>
-      <div class="hp-obj-hero-val" id="perf-target">— €</div>
-      <div class="hp-obj-hero-sub" id="perf-status">—</div>
+  <!-- ══════════════════════════════════
+       CARTE HERO
+  ══════════════════════════════════ -->
+  <div class="hp2-hero-card">
+    <div class="hp2-hero-status" id="perf-status">—</div>
+    <div class="hp2-hero-big">
+      <span class="hp2-hero-pct" id="perf-pct">0%</span>
+      <span class="hp2-hero-atteint"> atteint</span>
+    </div>
+    <div class="hp2-hero-sub" id="perf-current-sub">—</div>
+
+    <!-- Barre de progression avec marqueurs -->
+    <div class="hp2-bar-wrap">
+      <div class="hp2-bar-fill" id="home-obj-bar-fill" style="width:0%"></div>
+    </div>
+    <div class="hp2-bar-labels">
+      <span class="hp2-bar-lbl-0">0</span>
+      <span class="hp2-bar-lbl-ca" id="perf-current">— €</span>
+      <span class="hp2-bar-lbl-obj" id="hp2-bar-obj">— €</span>
     </div>
 
-    <!-- Ring centré — progression vers l'objectif -->
-    <div class="hp-ring-wrap">
-      <svg viewBox="0 0 120 120" class="hp-ring-svg">
-        <defs>
-          <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#F5C842"/>
-            <stop offset="100%" stop-color="#FF9500"/>
-          </linearGradient>
-        </defs>
-        <circle cx="60" cy="60" r="50" class="ring-bg"/>
-        <circle cx="60" cy="60" r="50" class="ring-fill" id="ring-fill" stroke-dasharray="314" stroke-dashoffset="314"/>
-      </svg>
-      <div class="hp-ring-inner">
-        <span class="hp-ring-pct" id="perf-pct">0%</span>
-        <span class="hp-ring-sub">atteint</span>
+    <!-- 3 KPIs -->
+    <div class="hp2-kpis">
+      <div class="hp2-kpi">
+        <div class="hp2-kpi-val" id="hp2-kpi-mois" style="color:var(--green)">0</div>
+        <div class="hp2-kpi-lbl">Mois ≥ Obj.</div>
+      </div>
+      <div class="hp2-kpi">
+        <div class="hp2-kpi-val" id="hp2-kpi-net" style="color:var(--accent)">— €</div>
+        <div class="hp2-kpi-lbl">Net moyen</div>
+      </div>
+      <div class="hp2-kpi">
+        <div class="hp2-kpi-val" id="hp2-kpi-rest" style="color:var(--blue)">0</div>
+        <div class="hp2-kpi-lbl">Mois restants</div>
       </div>
     </div>
 
-    <!-- CA actuel + Net estimé chips -->
-    <div class="hp-chips">
-      <div class="hp-chip hp-chip-ca">
-        <div class="hp-chip-lbl">CA Actuel</div>
-        <div class="hp-chip-val" id="perf-current">— €</div>
-      </div>
-      <div class="hp-chip hp-chip-net">
-        <div class="hp-chip-lbl">Net Estimé</div>
-        <div class="hp-chip-val" id="home-cur-net">— €</div>
-      </div>
-    </div>
-
-    <!-- Barre de progression -->
-    <div class="hp-progress-wrap">
-      <div class="hp-progress-fill" id="home-obj-bar-fill" style="width:0%"></div>
-    </div>
-
-    <!-- Rythme nécessaire -->
-    <div class="hp-rhythm">
-      <span class="hp-rhythm-icon">⚡</span>
-      <div class="hp-rhythm-body">
-        <span class="hp-rhythm-val" id="rhythm-val">— €</span>
-        <span class="hp-rhythm-lbl" id="rhythm-sub">/jour pour l'objectif</span>
-      </div>
-    </div>
-
-    <!-- Modifier l'objectif -->
-    <div class="hp-edit-toggle" onclick="togglePerfEdit()">
+    <!-- Edit objectif -->
+    <div class="hp2-edit-toggle" onclick="togglePerfEdit()">
       <span id="perf-edit-arrow">✎ Modifier l'objectif</span>
     </div>
     <div class="perf-edit" id="perf-edit" style="display:none">
@@ -2424,7 +2414,38 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     </div>
   </div>
 
-  <!-- ═══════ CARTE 2 — CETTE SEMAINE ═══════ -->
+  <!-- Alerte contextuelle -->
+  <div class="hp2-alert" id="home-alert">
+    <div class="hp2-alert-icon" id="home-alert-icon">⚠️</div>
+    <div class="hp2-alert-text" id="home-alert-text">—</div>
+  </div>
+
+  <!-- Lignes objectifs -->
+  <div class="hp2-obj-list">
+    <div class="hp2-obj-item" onclick="togglePerfEdit()">
+      <div class="hp2-obj-icon">🎯</div>
+      <div class="hp2-obj-body">
+        <div class="hp2-obj-title">Objectif mensuel</div>
+        <div class="hp2-obj-desc" id="hp2-obj-desc">Net ≈ — €</div>
+      </div>
+      <div class="hp2-obj-val" id="hp2-obj-val">— €</div>
+    </div>
+    <div class="hp2-obj-item" onclick="goSaisie('week')">
+      <div class="hp2-obj-icon">⚡</div>
+      <div class="hp2-obj-body">
+        <div class="hp2-obj-title">Rythme nécessaire</div>
+        <div class="hp2-obj-desc" id="rhythm-sub">/jour pour l'objectif</div>
+      </div>
+      <div class="hp2-obj-val" style="color:var(--orange)" id="rhythm-val">— €</div>
+    </div>
+  </div>
+
+  <!-- Net du mois (caché, conservé pour JS) -->
+  <span id="home-cur-net" style="display:none">— €</span>
+
+  <!-- ══════════════════════════════════
+       CETTE SEMAINE
+  ══════════════════════════════════ -->
   <div class="hp-card" onclick="goSaisie('week')">
     <div class="hp-card-title">📅 CETTE SEMAINE <span class="hp-card-title-arrow">›</span></div>
     <div class="hp-week-header">
@@ -2437,13 +2458,17 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     <div class="hp-week-foot" id="home-week-foot">—</div>
   </div>
 
-  <!-- ═══════ CARTE 3 — 3 DERNIERS MOIS ═══════ -->
+  <!-- ══════════════════════════════════
+       3 DERNIERS MOIS
+  ══════════════════════════════════ -->
   <div class="hp-card">
     <div class="hp-card-title">🗓️ DERNIERS MOIS</div>
     <div class="hp-months" id="home-months-row"></div>
   </div>
 
-  <!-- ═══════ CARTE 4 — BILAN ANNÉE ═══════ -->
+  <!-- ══════════════════════════════════
+       BILAN ANNÉE
+  ══════════════════════════════════ -->
   <div class="hp-card" onclick="goPage('evol')">
     <div class="hp-card-title">📆 BILAN <span id="ms-year-title">2026</span> <span class="hp-card-title-arrow">›</span></div>
     <div class="hp-bilan-grid">
@@ -2470,7 +2495,9 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     </div>
   </div>
 
-  <!-- ═══════ CARTE 5 — RECORDS ═══════ -->
+  <!-- ══════════════════════════════════
+       RECORDS
+  ══════════════════════════════════ -->
   <div class="hp-card">
     <div class="hp-card-title">🏆 MES RECORDS</div>
     <div class="hp-records">
@@ -2495,7 +2522,9 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     </div>
   </div>
 
-  <!-- ═══════ CARTE 6 — ACTIONS RAPIDES ═══════ -->
+  <!-- ══════════════════════════════════
+       ACTIONS RAPIDES
+  ══════════════════════════════════ -->
   <div class="hp-card">
     <div class="hp-card-title">🔗 ACTIONS RAPIDES</div>
     <div class="hp-actions-primary">
@@ -2528,7 +2557,9 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     </div>
   </div>
 
-  <!-- ═══════ CARTE 7 — PROCHAINS RDV ═══════ -->
+  <!-- ══════════════════════════════════
+       PROCHAINS RDV
+  ══════════════════════════════════ -->
   <div class="hp-card" onclick="goPage('cal')" id="home-rdv-block">
     <div class="hp-card-title">📌 PROCHAINS RDV <span class="hp-card-title-arrow">›</span></div>
     <div id="home-cal-content">
@@ -2537,7 +2568,9 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     <div class="hp-rdv-foot" id="home-cal-foot">—</div>
   </div>
 
-  <!-- ═══════ CARTE 8 — BADGES ═══════ -->
+  <!-- ══════════════════════════════════
+       BADGES
+  ══════════════════════════════════ -->
   <div class="hp-card">
     <div class="hp-card-title">
       🎖️ BADGES
@@ -4059,7 +4092,7 @@ function renderHome(){
   // Header
   const hour=new Date().getHours();
   const greet=hour<6?'Coucou':hour<12?'Bonjour':hour<18?'Bel après-midi':'Bonsoir';
-  document.getElementById('home-greeting').textContent=greet+' '+(USER.prenom||'')+ ' 👋';
+  document.getElementById('home-greeting').textContent=greet+',\n'+(USER.prenom||'')+' 👋';
   const ctx=[USER.poste,USER.entreprise].filter(Boolean).join(' chez ');
   document.getElementById('home-context').textContent=ctx||'Pilote ton activité';
 
@@ -4093,34 +4126,34 @@ function renderHome(){
   const pctClamped=Math.min(pct,100);
 
   document.getElementById('perf-current').textContent=perfCA>0?fmt(perfCA):'— €';
-  document.getElementById('perf-current-sub').textContent=perfMonthLbl||'—';
+  document.getElementById('perf-current-sub').textContent=perfCA>0&&OBJ_CA>0?fmt(perfCA)+' réalisés sur '+fmt(OBJ_CA)+' visés':perfCA>0?fmt(perfCA)+' réalisés ce mois':(perfMonthLbl||'Aucune donnée saisie');
   document.getElementById('perf-target').textContent=fmt(OBJ_CA);
   document.getElementById('perf-pct').textContent=pct>0?pct+'%':'0%';
   // Net du mois en cours
   const netEl=document.getElementById('home-cur-net');
   if(netEl)netEl.textContent=perfNet>0?fmt(perfNet):'— €';
 
-  // Mini ring (circumference = 2*PI*32 ≈ 201)
-  const offset=314-(314*pctClamped/100);
-  const ringEl=document.getElementById('ring-fill');
-  if(ringEl)ringEl.setAttribute('stroke-dashoffset',offset);
+  // Barre hero (ring supprimé, progress bar uniquement)
+  const barObjEl=document.getElementById('hp2-bar-obj');
+  if(barObjEl)barObjEl.textContent=OBJ_CA>0?fmt(OBJ_CA):'— €';
 
   // Barre objectif
   const barEl=document.getElementById('home-obj-bar-fill');
   if(barEl)barEl.style.width=pctClamped+'%';
 
-  // Status
+  // Status hero
   let statusTxt='';
-  if(OBJ_CA===0){statusTxt='Définis un objectif ↑';}
-  else if(pct===0){statusTxt='Commence à saisir ✏️';}
-  else if(pct<50){statusTxt='Continue, tu avances 💪';}
-  else if(pct<80){statusTxt='Belle forme ! 🌤️';}
-  else if(pct<100){statusTxt='Tout près du but ✨';}
-  else {statusTxt='Objectif atteint ! 🎉';}
+  const yrLbl=' — '+currentYear;
+  if(OBJ_CA===0){statusTxt='🎯 Définis ton objectif mensuel';}
+  else if(pct===0){statusTxt='✏️ Commence à saisir ton CA'+yrLbl;}
+  else if(pct<50){statusTxt='💪 En route'+yrLbl;}
+  else if(pct<80){statusTxt='🌤️ Belle forme'+yrLbl;}
+  else if(pct<100){statusTxt='✨ Tout près du but'+yrLbl;}
+  else{statusTxt='🎉 OBJECTIF ATTEINT'+yrLbl;}
   const statusEl=document.getElementById('perf-status');
   if(statusEl){
     statusEl.textContent=statusTxt;
-    statusEl.style.color=pct>=100?'var(--green)':pct>=80?'var(--accent)':'var(--text-soft)';
+    statusEl.style.color=pct>=100?'var(--green)':pct>=80?'var(--accent)':'var(--muted)';
   }
 
   // Objectif edit pré-rempli
@@ -4198,6 +4231,33 @@ function renderHome(){
   const streak=calcStreak();
   const streakEl=document.getElementById('home-year-streak');
   if(streakEl)streakEl.textContent=streak.days;
+
+  // ━━━━ KPIs HERO ━━━━
+  const e2=id=>document.getElementById(id);
+  if(e2('hp2-kpi-mois'))e2('hp2-kpi-mois').textContent=moisOK;
+  if(e2('hp2-kpi-net'))e2('hp2-kpi-net').textContent=filled.length?fmt(totalNet/filled.length):'—';
+  if(e2('hp2-kpi-rest'))e2('hp2-kpi-rest').textContent=isCurrentYear?Math.max(0,11-cmIdx):0;
+  // Year pills
+  const allYrs=Object.keys(years).map(Number).sort((a,b)=>a-b);
+  const pillsEl=document.getElementById('hp2-year-pills');
+  if(pillsEl)pillsEl.innerHTML=allYrs.map(y=>`<button class="hp2-year-pill${y===currentYear?' active':''}" onclick="switchYear(${y})">${y}</button>`).join('');
+  // Objectif row
+  if(OBJ_CA>0){
+    if(e2('hp2-obj-desc'))e2('hp2-obj-desc').textContent='Net ≈ '+fmt(Math.round(calcSal(OBJ_CA).net))+' · CA cible';
+    if(e2('hp2-obj-val'))e2('hp2-obj-val').textContent=fmt(OBJ_CA);
+  }
+  // Alerte contextuelle
+  const alertEl=document.getElementById('home-alert');
+  const alertTxtEl=document.getElementById('home-alert-text');
+  const alertIconEl=document.getElementById('home-alert-icon');
+  if(alertEl&&alertTxtEl){
+    let aMsg='',aIcon='⚠️';
+    if(OBJ_CA===0){aMsg='Définis un objectif mensuel pour piloter ton CA.';aIcon='🎯';}
+    else if(pct>=100){aMsg='Objectif mensuel atteint ! Continue sur cette lancée 🚀';aIcon='🎉';}
+    else if(perfCA===0&&isCurrentYear&&cmIdx>=0){aMsg='Aucune donnée saisie pour '+MONTHS[cmIdx]+'. Pense à saisir ton CA !';aIcon='📝';}
+    if(aMsg){if(alertIconEl)alertIconEl.textContent=aIcon;alertTxtEl.textContent=aMsg;alertEl.classList.add('show');}
+    else{alertEl.classList.remove('show');}
+  }
 
   // ━━━━ BLOC 5 : RECORDS ━━━━
   const records=calcRecords();
