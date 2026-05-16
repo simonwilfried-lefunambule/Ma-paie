@@ -2341,41 +2341,56 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
   <!-- ═══════ CARTE 1 — CA DU MOIS ═══════ -->
   <div class="hp-card hp-hero">
     <div class="hp-card-title">📊 CA DU MOIS</div>
-    <div class="hp-hero-top">
-      <div class="hp-hero-left">
-        <div class="hp-hero-ca-val" id="perf-current">— €</div>
-        <div class="hp-hero-ca-sub" id="perf-current-sub">mois en cours</div>
-        <div class="hp-hero-net-row">
-          <span class="hp-hero-net-lbl">Net</span>
-          <span class="hp-hero-net-val" id="home-cur-net">— €</span>
-        </div>
-      </div>
-      <div class="hp-hero-ring">
-        <svg viewBox="0 0 80 80" class="hp-ring-svg">
-          <defs>
-            <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#F5C842"/>
-              <stop offset="100%" stop-color="#FF9500"/>
-            </linearGradient>
-          </defs>
-          <circle cx="40" cy="40" r="32" class="ring-bg"/>
-          <circle cx="40" cy="40" r="32" class="ring-fill" id="ring-fill" stroke-dasharray="201" stroke-dashoffset="201"/>
-        </svg>
-        <div class="hp-ring-pct" id="perf-pct">0%</div>
+
+    <!-- Ring centré -->
+    <div class="hp-ring-wrap">
+      <svg viewBox="0 0 120 120" class="hp-ring-svg">
+        <defs>
+          <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F5C842"/>
+            <stop offset="100%" stop-color="#FF9500"/>
+          </linearGradient>
+        </defs>
+        <circle cx="60" cy="60" r="50" class="ring-bg"/>
+        <circle cx="60" cy="60" r="50" class="ring-fill" id="ring-fill" stroke-dasharray="314" stroke-dashoffset="314"/>
+      </svg>
+      <div class="hp-ring-inner">
+        <span class="hp-ring-pct" id="perf-pct">0%</span>
+        <span class="hp-ring-month" id="perf-current-sub">—</span>
       </div>
     </div>
+
+    <!-- CA brut + Net payé chips -->
+    <div class="hp-chips">
+      <div class="hp-chip hp-chip-ca">
+        <div class="hp-chip-lbl">CA Brut</div>
+        <div class="hp-chip-val" id="perf-current">— €</div>
+      </div>
+      <div class="hp-chip hp-chip-net">
+        <div class="hp-chip-lbl">Net payé</div>
+        <div class="hp-chip-val" id="home-cur-net">— €</div>
+      </div>
+    </div>
+
+    <!-- Barre de progression -->
     <div class="hp-progress-wrap">
       <div class="hp-progress-fill" id="home-obj-bar-fill" style="width:0%"></div>
     </div>
     <div class="hp-obj-row">
-      <div class="hp-obj-label">Objectif : <span class="hp-obj-val" id="perf-target">— €</span>/mois</div>
-      <div class="hp-obj-status" id="perf-status">—</div>
+      <span class="hp-obj-label">Objectif : <span class="hp-obj-val" id="perf-target">— €</span>/mois</span>
+      <span class="hp-obj-status" id="perf-status">—</span>
     </div>
+
+    <!-- Rythme nécessaire -->
     <div class="hp-rhythm">
       <span class="hp-rhythm-icon">⚡</span>
-      <span class="hp-rhythm-val" id="rhythm-val">— €</span>
-      <span class="hp-rhythm-lbl" id="rhythm-sub">/jour pour l'objectif</span>
+      <div class="hp-rhythm-body">
+        <span class="hp-rhythm-val" id="rhythm-val">— €</span>
+        <span class="hp-rhythm-lbl" id="rhythm-sub">/jour pour l'objectif</span>
+      </div>
     </div>
+
+    <!-- Modifier l'objectif -->
     <div class="hp-edit-toggle" onclick="togglePerfEdit()">
       <span id="perf-edit-arrow">✎ Modifier l'objectif</span>
     </div>
@@ -4064,7 +4079,7 @@ function renderHome(){
   if(netEl)netEl.textContent=perfNet>0?fmt(perfNet):'— €';
 
   // Mini ring (circumference = 2*PI*32 ≈ 201)
-  const offset=201-(201*pctClamped/100);
+  const offset=314-(314*pctClamped/100);
   const ringEl=document.getElementById('ring-fill');
   if(ringEl)ringEl.setAttribute('stroke-dashoffset',offset);
 
@@ -4192,11 +4207,16 @@ function renderHome(){
   // ━━━━ BLOC 8 : BADGES ━━━━
   const badges=evaluateBadges(records,streak);
   const unlocked=badges.filter(b=>b.unlocked).length;
-  document.getElementById('badges-count').textContent=unlocked+'/'+badges.length+' débloqués';
-  document.getElementById('badges-grid').innerHTML=badges.map(b=>`<div class="badge-item ${b.unlocked?'unlocked':'locked'}" title="${escapeHtml(b.tip)}">
-    <div class="badge-emoji">${b.unlocked?b.emoji:'🔒'}</div>
-    <div class="badge-name">${b.name}</div>
-  </div>`).join('');
+  const unlockedBadges=badges.filter(b=>b.unlocked);
+  const lockedCount=badges.length-unlockedBadges.length;
+  document.getElementById('badges-count').textContent=unlockedBadges.length+'/'+badges.length+' débloqués';
+  if(unlockedBadges.length===0){
+    document.getElementById('badges-grid').innerHTML='<div class="hp-badges-teaser">Saisis ton CA pour débloquer tes premiers badges 🏅<br><small style="color:var(--muted-2)">'+badges.length+' badges à découvrir</small></div>';
+  } else {
+    const circles=unlockedBadges.map(b=>`<div class="hp-badge-circle" title="${escapeHtml(b.tip)}">${b.emoji}</div>`).join('');
+    const lockedTxt=lockedCount>0?`<div class="hp-badges-locked-row">🔒 ${lockedCount} badge${lockedCount>1?'s':''} encore à débloquer</div>`:'<div class="hp-badges-locked-row">🎉 Tous les badges débloqués !</div>';
+    document.getElementById('badges-grid').innerHTML=`<div class="hp-badges-unlocked">${circles}</div>${lockedTxt}`;
+  }
 
   // Simulateur preview (gardé en mémoire pour le simu)
   let simuCA=15000;
