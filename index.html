@@ -2077,6 +2077,118 @@ html[data-theme='dark'] .nav-bar{background:var(--surface);border-top-color:var(
 html[data-theme='dark'] .nav-item{color:var(--muted)}
 html[data-theme='dark'] .nav-item.active{color:var(--accent)}
 
+/* ══════════════════════════════════════════════
+   HOME PAGE — hp-* (redesign pro)
+══════════════════════════════════════════════ */
+.hp-header{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 10px}
+.hp-greeting{font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--text)}
+.hp-sub{font-size:13px;color:var(--muted);margin-top:2px;font-weight:500}
+.hp-settings-btn{width:42px;height:42px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;flex-shrink:0;touch-action:manipulation;transition:background .15s}
+.hp-settings-btn:active{background:var(--surface3)}
+
+.hp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+.hp-card-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.hp-card-title-arrow{font-size:16px;color:var(--muted-2);letter-spacing:0;text-transform:none}
+
+/* Hero CA */
+.hp-hero{background:linear-gradient(145deg,var(--surface) 0%,var(--surface2) 100%);border-color:rgba(245,200,66,.3);position:relative;overflow:hidden}
+.hp-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(245,200,66,.12) 0%,transparent 70%);pointer-events:none}
+.hp-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hp-hero-left{flex:1;min-width:0}
+.hp-hero-ca-val{font-size:38px;font-weight:900;letter-spacing:-1px;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1}
+.hp-hero-ca-sub{font-size:12px;color:var(--muted);margin-top:4px;font-weight:500}
+.hp-hero-net-row{display:inline-flex;align-items:center;gap:8px;background:var(--green-glow);border:1px solid var(--green);border-radius:10px;padding:6px 14px;margin-top:10px}
+.hp-hero-net-lbl{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px}
+.hp-hero-net-val{font-size:17px;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace}
+.hp-hero-ring{flex-shrink:0;position:relative;width:84px;height:84px}
+.hp-ring-svg{width:84px;height:84px;transform:rotate(-90deg)}
+.hp-ring-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:900;color:var(--accent);font-family:'JetBrains Mono',monospace}
+.hp-progress-wrap{margin:16px 0 8px;height:8px;background:var(--surface3);border-radius:8px;overflow:hidden}
+.hp-progress-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--accent),#FF9500);transition:width .6s cubic-bezier(.4,0,.2,1);min-width:0}
+.hp-obj-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;gap:8px}
+.hp-obj-label{color:var(--muted);font-weight:500;flex:1;min-width:0}
+.hp-obj-val{font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace}
+.hp-obj-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--surface3);color:var(--text-soft);white-space:nowrap;flex-shrink:0}
+.hp-rhythm{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 14px;background:var(--surface3);border-radius:12px}
+.hp-rhythm-icon{font-size:18px;flex-shrink:0}
+.hp-rhythm-val{font-size:16px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.hp-rhythm-lbl{font-size:12px;color:var(--muted);font-weight:500}
+.hp-edit-toggle{margin-top:12px;text-align:center;font-size:12px;color:var(--muted);font-weight:600;cursor:pointer;padding:6px;letter-spacing:.3px;touch-action:manipulation}
+.hp-edit-toggle:active{opacity:.7}
+
+/* Semaine bar chart */
+.hp-week-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.hp-week-total{font-size:28px;font-weight:900;color:var(--text);font-family:'JetBrains Mono',monospace;letter-spacing:-.5px}
+.hp-week-label{font-size:12px;color:var(--muted);font-weight:500}
+.hp-week-foot{font-size:12px;color:var(--muted);font-weight:500;margin-top:10px;text-align:center}
+.hp-bars{display:flex;align-items:flex-end;gap:6px;height:72px}
+.hp-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+.hp-bar-col{flex:1;display:flex;align-items:flex-end;width:100%}
+.hp-bar{width:100%;border-radius:6px 6px 0 0;background:var(--surface3);transition:height .4s cubic-bezier(.4,0,.2,1)}
+.hp-bar.filled{background:linear-gradient(180deg,var(--accent),rgba(245,200,66,.5))}
+.hp-bar.today{background:linear-gradient(180deg,var(--blue),rgba(59,130,246,.4))}
+.hp-bar.filled.today{background:linear-gradient(180deg,var(--green),rgba(34,197,94,.4))}
+.hp-bar-name{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+
+/* 3 derniers mois */
+.hp-months{display:flex;gap:10px}
+.hp-month-tile{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;touch-action:manipulation;transition:background .15s}
+.hp-month-tile:active{background:var(--surface3)}
+.hp-month-tile.tile-ok{border-color:rgba(34,197,94,.4);background:var(--green-glow)}
+.hp-month-tile.tile-mid{border-color:rgba(245,200,66,.35);background:var(--accent-glow)}
+.hp-month-name{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.hp-month-ca{font-size:15px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:-.3px}
+.hp-month-net{font-size:11px;color:var(--green);font-weight:600;margin-top:2px;font-family:'JetBrains Mono',monospace}
+.hp-month-prog{height:3px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.hp-month-prog-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .4s}
+.hp-month-tile.tile-ok .hp-month-prog-fill{background:var(--green)}
+.hp-month-badge{font-size:10px;font-weight:700;margin-top:6px;padding:2px 8px;border-radius:20px;display:inline-block;background:var(--surface3);color:var(--muted)}
+.hp-month-tile.tile-ok .hp-month-badge{background:var(--green-glow);color:var(--green)}
+.hp-month-tile.tile-mid .hp-month-badge{background:var(--accent-glow);color:var(--accent)}
+
+/* Bilan année */
+.hp-bilan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hp-bilan-item{background:var(--surface2);border-radius:14px;padding:14px 12px;border:1px solid var(--border)}
+.hp-bilan-icon{font-size:18px;margin-bottom:6px}
+.hp-bilan-val{font-size:20px;font-weight:900;font-family:'JetBrains Mono',monospace;letter-spacing:-.4px;margin-bottom:4px}
+.hp-bilan-lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* Records */
+.hp-records{display:flex}
+.hp-record{flex:1;text-align:center;padding:10px 4px}
+.hp-record+.hp-record{border-left:1px solid var(--border)}
+.hp-record-medal{font-size:20px;margin-bottom:4px}
+.hp-record-val{font-size:14px;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;letter-spacing:-.3px}
+.hp-record-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.hp-record-when{font-size:10px;color:var(--muted-2);margin-top:2px}
+
+/* Actions rapides */
+.hp-actions-primary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.hp-action-primary{background:var(--accent-glow);border:1.5px solid var(--accent);border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;touch-action:manipulation;transition:background .15s,transform .1s}
+.hp-action-primary:active{transform:scale(.97);background:var(--surface3)}
+.hp-action-primary-icon{font-size:26px;margin-bottom:6px}
+.hp-action-primary-lbl{font-size:13px;font-weight:700;color:var(--text)}
+.hp-actions-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hp-action-mini{background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:12px 4px;text-align:center;cursor:pointer;touch-action:manipulation;transition:background .15s}
+.hp-action-mini:active{background:var(--surface3)}
+.hp-action-mini-icon{font-size:20px;margin-bottom:4px}
+.hp-action-mini-lbl{font-size:10px;font-weight:600;color:var(--muted)}
+
+/* RDV & badges */
+.hp-rdv-empty{font-size:13px;color:var(--muted);text-align:center;padding:12px 0;font-weight:500}
+.hp-rdv-foot{font-size:11px;color:var(--muted-2);text-align:center;margin-top:8px;font-weight:500}
+.hp-badges-count{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px;border:1px solid var(--border);letter-spacing:0;text-transform:none}
+.hp-spacer{height:24px}
+
+@media (prefers-color-scheme:light){
+  .hp-card{box-shadow:0 1px 6px rgba(0,0,0,.07)}
+  .hp-hero{border-color:rgba(184,144,0,.3)}
+}
+html[data-theme='light'] .hp-card{box-shadow:0 1px 6px rgba(0,0,0,.07)}
+html[data-theme='light'] .hp-hero{border-color:rgba(184,144,0,.3)}
+html[data-theme='light'] .hp-action-primary{background:rgba(184,144,0,.1)}
+html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" onerror="this.onerror=null;this.src='chart.umd.js'"></script>
 </head>
@@ -2180,15 +2292,13 @@ html[data-theme='dark'] .nav-item.active{color:var(--accent)}
 <div class="page active" id="page-home">
 <div class="page-pad">
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- HEADER -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-header">
+  <!-- Header -->
+  <div class="hp-header">
     <div>
-      <div class="home-greeting" id="home-greeting">Bonjour 👋</div>
-      <div class="home-sub" id="home-context">—</div>
+      <div class="hp-greeting" id="home-greeting">Bonjour 👋</div>
+      <div class="hp-sub" id="home-context">Pilote ton activité</div>
     </div>
-    <button class="header-btn" onclick="goPage('params')" aria-label="Paramètres">⚙️</button>
+    <button class="hp-settings-btn" onclick="goPage('params')" aria-label="Paramètres">⚙️</button>
   </div>
 
   <!-- Guide premier démarrage -->
@@ -2201,22 +2311,20 @@ html[data-theme='dark'] .nav-item.active{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 1 — CA & OBJECTIF DU MOIS -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block">
-    <div class="home-block-title">📊 CA du mois</div>
-    <div class="home-month-main">
-      <div class="home-month-left">
-        <div class="home-month-ca" id="perf-current">— €</div>
-        <div class="home-month-label" id="perf-current-sub">mois en cours</div>
-        <div class="home-month-net-row">
-          <span class="home-month-net-lbl">Net :</span>
-          <span class="home-month-net-val" id="home-cur-net">— €</span>
+  <!-- ═══════ CARTE 1 — CA DU MOIS ═══════ -->
+  <div class="hp-card hp-hero">
+    <div class="hp-card-title">📊 CA DU MOIS</div>
+    <div class="hp-hero-top">
+      <div class="hp-hero-left">
+        <div class="hp-hero-ca-val" id="perf-current">— €</div>
+        <div class="hp-hero-ca-sub" id="perf-current-sub">mois en cours</div>
+        <div class="hp-hero-net-row">
+          <span class="hp-hero-net-lbl">Net</span>
+          <span class="hp-hero-net-val" id="home-cur-net">— €</span>
         </div>
       </div>
-      <div class="home-month-ring">
-        <svg viewBox="0 0 80 80" class="home-ring-svg">
+      <div class="hp-hero-ring">
+        <svg viewBox="0 0 80 80" class="hp-ring-svg">
           <defs>
             <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#F5C842"/>
@@ -2226,23 +2334,22 @@ html[data-theme='dark'] .nav-item.active{color:var(--accent)}
           <circle cx="40" cy="40" r="32" class="ring-bg"/>
           <circle cx="40" cy="40" r="32" class="ring-fill" id="ring-fill" stroke-dasharray="201" stroke-dashoffset="201"/>
         </svg>
-        <div class="home-ring-pct" id="perf-pct">0%</div>
+        <div class="hp-ring-pct" id="perf-pct">0%</div>
       </div>
     </div>
-    <!-- Barre objectif -->
-    <div class="home-obj-bar-wrap">
-      <div class="home-obj-bar-fill" id="home-obj-bar-fill"></div>
+    <div class="hp-progress-wrap">
+      <div class="hp-progress-fill" id="home-obj-bar-fill" style="width:0%"></div>
     </div>
-    <div class="home-obj-row">
-      <div class="home-obj-left">
-        <span class="home-obj-lbl">Objectif :</span>
-        <span class="home-obj-val" id="perf-target">— €</span>
-        <span class="home-obj-lbl">/mois</span>
-      </div>
-      <div class="home-obj-status" id="perf-status">—</div>
+    <div class="hp-obj-row">
+      <div class="hp-obj-label">Objectif : <span class="hp-obj-val" id="perf-target">— €</span>/mois</div>
+      <div class="hp-obj-status" id="perf-status">—</div>
     </div>
-    <!-- Modifier objectif -->
-    <div class="home-edit-obj-toggle" onclick="togglePerfEdit()">
+    <div class="hp-rhythm">
+      <span class="hp-rhythm-icon">⚡</span>
+      <span class="hp-rhythm-val" id="rhythm-val">— €</span>
+      <span class="hp-rhythm-lbl" id="rhythm-sub">/jour pour l'objectif</span>
+    </div>
+    <div class="hp-edit-toggle" onclick="togglePerfEdit()">
       <span id="perf-edit-arrow">✎ Modifier l'objectif</span>
     </div>
     <div class="perf-edit" id="perf-edit" style="display:none">
@@ -2259,135 +2366,129 @@ html[data-theme='dark'] .nav-item.active{color:var(--accent)}
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 2 — CETTE SEMAINE -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block" onclick="goSaisie('week')">
-    <div class="home-block-title">📅 Cette semaine <span class="home-block-arrow">›</span></div>
-    <div class="home-week-row">
-      <div class="home-week-total" id="home-week-amount">0 €</div>
-      <div class="home-week-days" id="home-week-days"></div>
+  <!-- ═══════ CARTE 2 — CETTE SEMAINE ═══════ -->
+  <div class="hp-card" onclick="goSaisie('week')">
+    <div class="hp-card-title">📅 CETTE SEMAINE <span class="hp-card-title-arrow">›</span></div>
+    <div class="hp-week-header">
+      <div>
+        <div class="hp-week-total" id="home-week-amount">0 €</div>
+        <div class="hp-week-label">total de la semaine</div>
+      </div>
     </div>
-    <div class="home-week-foot" id="home-week-foot">—</div>
-    <!-- Rythme nécessaire -->
-    <div class="home-rhythm-row">
-      <span class="home-rhythm-icon">⚡</span>
-      <span class="home-rhythm-val" id="rhythm-val">— €</span>
-      <span class="home-rhythm-lbl" id="rhythm-sub">/jour pour l'objectif</span>
-    </div>
+    <div class="hp-bars" id="home-week-days"></div>
+    <div class="hp-week-foot" id="home-week-foot">—</div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 3 — DERNIERS MOIS (3 mois glissants) -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block">
-    <div class="home-block-title">🗓️ Derniers mois</div>
-    <div class="home-months-row" id="home-months-row"></div>
+  <!-- ═══════ CARTE 3 — 3 DERNIERS MOIS ═══════ -->
+  <div class="hp-card">
+    <div class="hp-card-title">🗓️ DERNIERS MOIS</div>
+    <div class="hp-months" id="home-months-row"></div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 4 — BILAN ANNÉE -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block" onclick="goPage('evol')">
-    <div class="home-block-title">📆 Bilan <span id="ms-year-title">2026</span> <span class="home-block-arrow">›</span></div>
-    <div class="home-year-grid">
-      <div class="home-year-item">
-        <div class="home-year-val" id="ms-ca-avg" style="color:var(--accent)">— €</div>
-        <div class="home-year-lbl">CA moyen/mois</div>
+  <!-- ═══════ CARTE 4 — BILAN ANNÉE ═══════ -->
+  <div class="hp-card" onclick="goPage('evol')">
+    <div class="hp-card-title">📆 BILAN <span id="ms-year-title">2026</span> <span class="hp-card-title-arrow">›</span></div>
+    <div class="hp-bilan-grid">
+      <div class="hp-bilan-item">
+        <div class="hp-bilan-icon">📊</div>
+        <div class="hp-bilan-val" id="ms-ca-avg" style="color:var(--accent)">— €</div>
+        <div class="hp-bilan-lbl">CA moy/mois</div>
       </div>
-      <div class="home-year-item">
-        <div class="home-year-val" id="ms-net-avg" style="color:var(--green)">— €</div>
-        <div class="home-year-lbl">Net moyen/mois</div>
+      <div class="hp-bilan-item">
+        <div class="hp-bilan-icon">💰</div>
+        <div class="hp-bilan-val" id="ms-net-avg" style="color:var(--green)">— €</div>
+        <div class="hp-bilan-lbl">Net moy/mois</div>
       </div>
-      <div class="home-year-item">
-        <div class="home-year-val" id="ms-mois-ok" style="color:var(--purple)">0/12</div>
-        <div class="home-year-lbl">Mois objectif</div>
+      <div class="hp-bilan-item">
+        <div class="hp-bilan-icon">🎯</div>
+        <div class="hp-bilan-val" id="ms-mois-ok" style="color:var(--purple)">0/12</div>
+        <div class="hp-bilan-lbl">Mois objectif</div>
       </div>
-      <div class="home-year-item">
-        <div class="home-year-val" id="home-year-streak" style="color:var(--orange)">0</div>
-        <div class="home-year-lbl">Jours d'affilée</div>
+      <div class="hp-bilan-item">
+        <div class="hp-bilan-icon">🔥</div>
+        <div class="hp-bilan-val" id="home-year-streak" style="color:var(--orange)">0</div>
+        <div class="hp-bilan-lbl">Jours d'affilée</div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 5 — RECORDS -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block">
-    <div class="home-block-title">🏆 Mes records</div>
-    <div class="home-records-row">
-      <div class="home-record">
-        <div class="home-record-val" id="record-day">— €</div>
-        <div class="home-record-lbl">Meilleur jour</div>
-        <div class="home-record-when" id="record-day-when">—</div>
+  <!-- ═══════ CARTE 5 — RECORDS ═══════ -->
+  <div class="hp-card">
+    <div class="hp-card-title">🏆 MES RECORDS</div>
+    <div class="hp-records">
+      <div class="hp-record">
+        <div class="hp-record-medal">🥇</div>
+        <div class="hp-record-val" id="record-day">— €</div>
+        <div class="hp-record-lbl">Meilleur jour</div>
+        <div class="hp-record-when" id="record-day-when">—</div>
       </div>
-      <div class="home-record-sep"></div>
-      <div class="home-record">
-        <div class="home-record-val" id="record-week">— €</div>
-        <div class="home-record-lbl">Meilleure semaine</div>
-        <div class="home-record-when" id="record-week-when">—</div>
+      <div class="hp-record">
+        <div class="hp-record-medal">📅</div>
+        <div class="hp-record-val" id="record-week">— €</div>
+        <div class="hp-record-lbl">Meilleure sem.</div>
+        <div class="hp-record-when" id="record-week-when">—</div>
       </div>
-      <div class="home-record-sep"></div>
-      <div class="home-record">
-        <div class="home-record-val" id="record-month">— €</div>
-        <div class="home-record-lbl">Meilleur mois</div>
-        <div class="home-record-when" id="record-month-when">—</div>
+      <div class="hp-record">
+        <div class="hp-record-medal">🗓️</div>
+        <div class="hp-record-val" id="record-month">— €</div>
+        <div class="hp-record-lbl">Meilleur mois</div>
+        <div class="hp-record-when" id="record-month-when">—</div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 6 — ACCÈS RAPIDES -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block-title">🔗 Accès rapide</div>
-  <div class="home-shortcuts">
-    <div class="home-shortcut" onclick="goSaisie('month')">
-      <div class="home-shortcut-icon">✏️</div>
-      <div class="home-shortcut-lbl">Saisir un mois</div>
+  <!-- ═══════ CARTE 6 — ACTIONS RAPIDES ═══════ -->
+  <div class="hp-card">
+    <div class="hp-card-title">🔗 ACTIONS RAPIDES</div>
+    <div class="hp-actions-primary">
+      <div class="hp-action-primary" onclick="goSaisie('month');event.stopPropagation()">
+        <div class="hp-action-primary-icon">✏️</div>
+        <div class="hp-action-primary-lbl">Saisir un mois</div>
+      </div>
+      <div class="hp-action-primary" onclick="goSaisie('week');event.stopPropagation()">
+        <div class="hp-action-primary-icon">📅</div>
+        <div class="hp-action-primary-lbl">Saisir la semaine</div>
+      </div>
     </div>
-    <div class="home-shortcut" onclick="goSaisie('week')">
-      <div class="home-shortcut-icon">📅</div>
-      <div class="home-shortcut-lbl">Saisir la semaine</div>
-    </div>
-    <div class="home-shortcut" onclick="goPage('simu')">
-      <div class="home-shortcut-icon">🧮</div>
-      <div class="home-shortcut-lbl">Simuler un CA</div>
-    </div>
-    <div class="home-shortcut" onclick="goPage('cal')">
-      <div class="home-shortcut-icon">📌</div>
-      <div class="home-shortcut-lbl">Mes RDV</div>
-    </div>
-    <div class="home-shortcut" onclick="goPage('cmd')">
-      <div class="home-shortcut-icon">🛒</div>
-      <div class="home-shortcut-lbl">Commandes</div>
-    </div>
-    <div class="home-shortcut" onclick="goPage('evol')">
-      <div class="home-shortcut-icon">📊</div>
-      <div class="home-shortcut-lbl">Mes données</div>
+    <div class="hp-actions-mini">
+      <div class="hp-action-mini" onclick="goPage('simu');event.stopPropagation()">
+        <div class="hp-action-mini-icon">🧮</div>
+        <div class="hp-action-mini-lbl">Simuler</div>
+      </div>
+      <div class="hp-action-mini" onclick="goPage('cal');event.stopPropagation()">
+        <div class="hp-action-mini-icon">📌</div>
+        <div class="hp-action-mini-lbl">RDV</div>
+      </div>
+      <div class="hp-action-mini" onclick="goPage('cmd');event.stopPropagation()">
+        <div class="hp-action-mini-icon">🛒</div>
+        <div class="hp-action-mini-lbl">Commandes</div>
+      </div>
+      <div class="hp-action-mini" onclick="goPage('evol');event.stopPropagation()">
+        <div class="hp-action-mini-icon">📊</div>
+        <div class="hp-action-mini-lbl">Données</div>
+      </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 7 — RDV DU JOUR -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block" onclick="goPage('cal')" id="home-rdv-block">
-    <div class="home-block-title">📌 Prochains RDV <span class="home-block-arrow">›</span></div>
+  <!-- ═══════ CARTE 7 — PROCHAINS RDV ═══════ -->
+  <div class="hp-card" onclick="goPage('cal')" id="home-rdv-block">
+    <div class="hp-card-title">📌 PROCHAINS RDV <span class="hp-card-title-arrow">›</span></div>
     <div id="home-cal-content">
-      <div class="dash-cal-empty">Aucun RDV programmé</div>
+      <div class="hp-rdv-empty">Aucun RDV programmé</div>
     </div>
-    <div class="home-block-foot" id="home-cal-foot">—</div>
+    <div class="hp-rdv-foot" id="home-cal-foot">—</div>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
-  <!-- BLOC 8 — BADGES -->
-  <!-- ══════════════════════════════════════ -->
-  <div class="home-block">
-    <div class="home-block-title-row">
-      <span class="home-block-title">🎖️ Badges</span>
-      <span class="home-badges-count" id="badges-count">0 débloqués</span>
+  <!-- ═══════ CARTE 8 — BADGES ═══════ -->
+  <div class="hp-card">
+    <div class="hp-card-title">
+      🎖️ BADGES
+      <span class="hp-badges-count" id="badges-count">0 débloqués</span>
     </div>
     <div class="badges-grid" id="badges-grid"></div>
   </div>
+
+  <div class="hp-spacer"></div>
 
 </div>
 </div>
@@ -3974,11 +4075,13 @@ function renderHome(){
   weekDays.forEach(dt=>{const v=dailyData[isoDate(dt)];if(v&&v>0){weekTotal+=v;weekFilled++;}});
   document.getElementById('home-week-amount').textContent=fmt(weekTotal);
   const dayInit=['L','M','M','J','V','S','D'];
+  const maxDayVal=Math.max(...weekDays.map(dt=>dailyData[isoDate(dt)]||0),1);
   document.getElementById('home-week-days').innerHTML=weekDays.map((dt,i)=>{
-    const iso=isoDate(dt);const v=dailyData[iso];const filled=v&&v>0;
+    const iso=isoDate(dt);const v=dailyData[iso]||0;const filled=v>0;
     const isToday=iso===todayISO;
-    let cls='dash-day';if(filled)cls+=' filled';if(isToday)cls+=' today';
-    return `<div class="${cls}"><div class="dash-day-name">${dayInit[i]}</div><div class="dash-day-status">${filled?'✓':'·'}</div></div>`;
+    const barH=filled?Math.max(Math.round(v/maxDayVal*100),12):6;
+    let barCls='hp-bar';if(filled)barCls+=' filled';if(isToday)barCls+=' today';
+    return `<div class="hp-bar-wrap"><div class="hp-bar-col"><div class="${barCls}" style="height:${barH}%"></div></div><div class="hp-bar-name">${dayInit[i]}</div></div>`;
   }).join('');
   if(weekFilled===0){
     document.getElementById('home-week-foot').textContent='Aucun jour saisi · Touche pour saisir';
@@ -4002,15 +4105,17 @@ function renderHome(){
       const mData=(years[yIdx]||[])[mIdx]||{};
       const ca=mData.ca||0;const net=mData.netPaye||0;
       const pctM=OBJ_CA>0&&ca>0?Math.round(ca/OBJ_CA*100):0;
-      let cls='home-month-tile';let badge='';
-      if(ca>=OBJ_CA){cls+=' tile-ok';badge='✅ Obj';}
-      else if(ca>=OBJ_CA*.8){cls+=' tile-mid';badge=pctM+'%';}
-      else if(ca>0){cls+=' tile-low';badge=pctM+'%';}
+      let cls='hp-month-tile';let badge='';
+      if(ca>=OBJ_CA&&OBJ_CA>0){cls+=' tile-ok';badge='✅ Objectif';}
+      else if(ca>=OBJ_CA*.8&&OBJ_CA>0){cls+=' tile-mid';badge=pctM+'%';}
+      else if(ca>0){cls+=' tile-low';badge=pctM>0?pctM+'%':'';}
+      const progW=OBJ_CA>0&&ca>0?Math.min(Math.round(ca/OBJ_CA*100),100):0;
       tiles.push(`<div class="${cls}" onclick="openMonthForm(${mIdx})">
-        <div class="home-month-tile-name">${MS[mIdx]} ${yIdx!==currentYear?yIdx:''}</div>
-        <div class="home-month-tile-ca">${ca>0?fmt(ca):'—'}</div>
-        <div class="home-month-tile-net">${net>0?fmt(net):'—'}</div>
-        ${badge?`<div class="home-month-tile-badge">${badge}</div>`:''}
+        <div class="hp-month-name">${MS[mIdx]}${yIdx!==currentYear?' '+yIdx:''}</div>
+        <div class="hp-month-ca">${ca>0?fmt(ca):'—'}</div>
+        <div class="hp-month-net">${net>0?fmt(net):'—'}</div>
+        <div class="hp-month-prog"><div class="hp-month-prog-fill" style="width:${progW}%"></div></div>
+        ${badge?`<div class="hp-month-badge">${badge}</div>`:''}
       </div>`);
     }
     monthsRow.innerHTML=tiles.join('');
