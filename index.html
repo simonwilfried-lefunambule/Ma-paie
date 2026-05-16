@@ -2214,6 +2214,14 @@ html[data-theme='light'] .hp-card{box-shadow:0 1px 6px rgba(0,0,0,.07)}
 html[data-theme='light'] .hp-hero{border-color:rgba(184,144,0,.25)}
 html[data-theme='light'] .hp-action-primary{border-color:rgba(184,144,0,.35)}
 html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
+/* Objectif en vedette */
+.hp-obj-hero{text-align:center;margin-bottom:18px;padding:16px 14px;background:var(--accent-glow);border:1.5px solid rgba(245,200,66,.35);border-radius:16px}
+.hp-obj-hero-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.hp-obj-hero-val{font-size:34px;font-weight:900;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:-1.5px;line-height:1}
+.hp-obj-hero-sub{font-size:12px;font-weight:700;margin-top:8px}
+.hp-ring-sub{font-size:11px;color:var(--muted);font-weight:500;display:block;margin-top:4px}
+@media (prefers-color-scheme:light){.hp-obj-hero{border-color:rgba(184,144,0,.3)}}
+html[data-theme='light'] .hp-obj-hero{border-color:rgba(184,144,0,.3)}
 .hp-spacer{height:24px}
 
 </style>
@@ -2340,9 +2348,16 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
 
   <!-- ═══════ CARTE 1 — CA DU MOIS ═══════ -->
   <div class="hp-card hp-hero">
-    <div class="hp-card-title">📊 CA DU MOIS</div>
+    <div class="hp-card-title">📊 CA DU MOIS · <span id="perf-current-sub">—</span></div>
 
-    <!-- Ring centré -->
+    <!-- Objectif EN VEDETTE -->
+    <div class="hp-obj-hero">
+      <div class="hp-obj-hero-lbl">Objectif du mois</div>
+      <div class="hp-obj-hero-val" id="perf-target">— €</div>
+      <div class="hp-obj-hero-sub" id="perf-status">—</div>
+    </div>
+
+    <!-- Ring centré — progression vers l'objectif -->
     <div class="hp-ring-wrap">
       <svg viewBox="0 0 120 120" class="hp-ring-svg">
         <defs>
@@ -2356,18 +2371,18 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
       </svg>
       <div class="hp-ring-inner">
         <span class="hp-ring-pct" id="perf-pct">0%</span>
-        <span class="hp-ring-month" id="perf-current-sub">—</span>
+        <span class="hp-ring-sub">atteint</span>
       </div>
     </div>
 
-    <!-- CA brut + Net payé chips -->
+    <!-- CA actuel + Net estimé chips -->
     <div class="hp-chips">
       <div class="hp-chip hp-chip-ca">
-        <div class="hp-chip-lbl">CA Brut</div>
+        <div class="hp-chip-lbl">CA Actuel</div>
         <div class="hp-chip-val" id="perf-current">— €</div>
       </div>
       <div class="hp-chip hp-chip-net">
-        <div class="hp-chip-lbl">Net payé</div>
+        <div class="hp-chip-lbl">Net Estimé</div>
         <div class="hp-chip-val" id="home-cur-net">— €</div>
       </div>
     </div>
@@ -2375,10 +2390,6 @@ html[data-theme='light'] .hp-month-tile.tile-ok{border-color:rgba(21,128,61,.3)}
     <!-- Barre de progression -->
     <div class="hp-progress-wrap">
       <div class="hp-progress-fill" id="home-obj-bar-fill" style="width:0%"></div>
-    </div>
-    <div class="hp-obj-row">
-      <span class="hp-obj-label">Objectif : <span class="hp-obj-val" id="perf-target">— €</span>/mois</span>
-      <span class="hp-obj-status" id="perf-status">—</span>
     </div>
 
     <!-- Rythme nécessaire -->
@@ -4057,6 +4068,12 @@ function renderHome(){
     perfCA=d[cmIdx].ca||0;
     perfNet=d[cmIdx].netPaye||0;
     perfMonthLbl=MONTHS[cmIdx]+' '+currentYear;
+    // Si pas de CA mensuel saisi, agréger les données journalières du mois en cours
+    if(perfCA===0){
+      const mPfx=`${currentYear}-${String(cmIdx+1).padStart(2,'0')}-`;
+      const dSum=Object.entries(dailyData).filter(([k])=>k.startsWith(mPfx)).reduce((s,[,v])=>s+(Number(v)||0),0);
+      if(dSum>0){perfCA=dSum;if(perfNet===0)perfNet=Math.round(calcSal(dSum).net);}
+    }
   } else {
     // Autre année : dernier mois saisi
     let lastIdx=-1;
